@@ -17,25 +17,25 @@ The reason why our group chose this domain was because during Donald Trump’s p
 ## Section 2:
 
 ### Analysis Q1:
-**How did Trump’s weighted tweets affect public opinion over the course of his presidency?**
+**Did Trump’s weighted tweets affect public opinion over the course of his presidency? If so, to what extent?**
 
-This question lets us quantify the weight of Trump’s tweets, by the amount of public response for each tweet. This will be measured by the sum of the retweets and favorites (with retweets having a higher degree of weight than favorites). Using this data we can build a timeline of public opinion/approval rating and compare that to the varying weights each tweet of and attempt to establish a potential correlation between Trump’s most popular tweets and his forgotten ones.
+This question lets us quantify the weight of Trump’s tweets, by the amount of public response for each tweet. This will be measured by the sum of the retweets and favorites (with retweets having a higher degree of weight than favorites). Using this data we can build a timeline of public opinion/approval rating and compare that to the varying weights each tweet of and attempt to establish a potential correlation between Trump’s most popular tweets and his forgotten ones. This question is significant because it allows us to measure the influence that social media can have on the publics opinions regarding presidency.
 
 
 ### Analysis Q2:
  **When were Trump's approval ratings at all time lows and at all time highs and how much was he tweeting in that time period? What major events were happening in that time period?**
 
- This would allow us to use our approval ratings data to address the possibility of correlation vs causation. Without addressing the possibility of correlation and not causation we may naively make the conclusion that any time Trump tweeted it negatively or positively affected his approval ratings.
+ This would allow us to use our approval ratings data to address the possibility of correlation vs causation. Without addressing the possibility of correlation and not causation we may naively make the conclusion that any time Trump tweeted it negatively or positively affected his approval ratings. This question is significant because it allows us to analyze the context behind the tweets and what major events were going on at the time to check the existence of a connection between the two.
 
 ### Analysis Q3:
-**How did Trump’s social media usage change the approval ratings of his voters?**
+**Did Trump’s social media usage change the approval ratings of his voters? If so, by how much and what indicators point towards the change?**
 
-The question allows us to explore multiple avenues to answer it, such as the number of published tweets about a specific topic or a pattern in how many tweets are published/deleted per month. With this direct comparison, we are able to analyze the impact social media has on people’s perception of U.S. politics.
+The question allows us to explore multiple avenues to answer it, such as the number of published tweets about a specific topic or a pattern in how many tweets are published/deleted per month. With this direct comparison, we are able to analyze the impact social media has on people’s perception of U.S. politics. We will be analyzing factors such as the approval rating timeline compared to his social media usage during those times. This question is open-ended which allows us to view possible relationships between the two factors and whether they exist. With our findings we can analyze further ideas on the effect of social media in the modern world.
 
 ### Analysis Q4:
-**How did Trump’s legal issues affect his approval rating?**
+**During his presidency, were the legal issues that Trump faced an indicator of the public perception of him? If so, to what degree?**
 
-This question allows us to explore the effect that lawsuits have on a president at the time. It is open-ended yet closed off to the point where we are in a specific scope but can have a variety of answers. It will be interesting to see how different lawsuits affect his approval rating in different ways. We can answer this question by looking at both Trump’s approval rating over time and a data set of all of Trump’s lawsuits. With this comparison, we can help determine whether the tweets made were a direct causation or correlation with his approval rating.
+This question allows us to explore the effect that lawsuits have on a president at the time. It will be interesting to see how different lawsuits affect his approval rating in different ways. We can answer this question by looking at both Trump’s approval rating over time and a data set of all of Trump’s lawsuits. With this comparison, we can help determine whether the tweets made were a direct causation or correlation with his approval rating. This question allows us to determine the validity of other questions as a side point to consider when analyzing the change in approval rating.
 
 
 
@@ -50,7 +50,7 @@ The data set is credible and has been cited by “FactCheck.org, PolitiFact, Sno
 
 ### Data Set 2: Approval Rating Data:
 This data set contains the results of different poll results over his term.
-The data was retrieved from the FiveThirtyEight [GitHub](repositoryhttps://github.com/fivethirtyeight/data/tree/master/trump-approval-ratings).
+The data was retrieved from the FiveThirtyEight [GitHub repository](https://github.com/fivethirtyeight/data/tree/master/trump-approval-ratings).
 This data was compiled by the opinion poll analyst organization, FiveThirtyEight. We do not know necessarily how the data was collected for each poll that FiveThirtyEight analyzed, as they were collected from various websites, however we do know FiveThirtyEight has a history of credibility and strict quality when analyzing datasets and poll results. This data set will help when answering all of our questions as a major theme in our analysis is public perception of the previous president.
 
 ### Data Set 3: Trump Lawsuits Data:
