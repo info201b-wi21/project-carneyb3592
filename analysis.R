@@ -217,6 +217,26 @@ case_with_lowest_approval <- lawsuits_to_approval_df %>%
 View(case_with_lowest_approval)
 case_with_highest_approval <- lawsuits_to_approval_df %>%
   filter(approve_estimate == max(approve_estimate))
+average_change_per_issue <- lawsuits_to_approval_df %>%
+  group_by(issue) %>%
+  summarise(change_in_approval_of_next_day = mean(abs(change_in_approval_of_next_day)),
+            number_of_cases = n()) %>%
+  filter(number_of_cases > 2)
+amount_of_positive_changes <- lawsuits_to_approval_df %>%
+  filter(change_in_approval_of_next_day > 0) %>%
+  summarise(amount = n()) %>%
+  pull()
+amount_of_negative_changes <- lawsuits_to_approval_df %>%
+  filter(change_in_approval_of_next_day < 0) %>%
+  summarise(amount = n()) %>%
+  pull()
+amount_of_no_changes <- lawsuits_to_approval_df %>%
+  filter(change_in_approval_of_next_day == 0) %>%
+  summarise(amount = n()) %>%
+  pull()
+View(amount_of_positive_changes)
+View(amount_of_no_changes)
+View(average_change_per_issue)
 View(case_with_highest_approval)
 View(changes_in_rating_df)
 View(top_three_negative_changes)
@@ -226,5 +246,28 @@ View(top_three_postive_changes)
 ## 4
 # Through our analysis, we found very few court cases that could have had a 
 # major effect on Trump's approval rating. There was no change above 0.7% within
-# that. The highest postive change was a 0.69048%, followed by 0.57166% and 
-# 0.45039%. 
+# that. The greatest positive change was a 0.69048%, followed by 0.57166% and 
+# 0.45039%. The greatest negative changes were -0.62866%,-0.36466%, and -0.25494%.
+# Since Trump's approval rating remained relatively stagnant throughout his 
+# presidency at around low 40s, we have come to the conclusion that very few, 
+# almost none had an effect, since Trump's approval rating was likely shifted by
+# various other factors. We have determine that if any cases had an effect, it 
+# would likely be ones with above 0.5% change in approval rating of the next day,
+# which concluded to be PEN America v. Trump, Clifford v. Trump, and California v. Ross. When researching 
+# these lawsuits online, we found a variety of major news articles for PEN America v. Trump,
+# yet none for the others. We can only then assume that the only lawsuit that had a significant effect
+# on Trump's approval rating was PEN America v. Trump. However, this is only accounting
+# for the court case, at the same time, there were news articles on the day the case
+# was filed about Trump's attack on Stephanie Clifford about her "Horseface" 
+# (https://www.nytimes.com/2018/10/16/us/politics/trump-women-insults.html).
+# When examining the relationship between the type of cases and change in approval
+# rating, we found that cases regarding 2016 Trump campaign and Census issues had
+# the highest average change at 0.27683% and 0.24039333%. While these were not 
+# the highest values overall, they were the highest for issues with more than 2
+# cases, as 1-2 cases could lead to skewed results. We also found that there was
+# almost an exact 1:1 ratio (24:26) of positive to negative changes with three 
+# at exactly 0. Overall, we can see little to no correlation with Trump's 
+# lawsuits and his approval rating. While some cases appear to have an effect, there
+# are a variety of factors that could have played into the change and we cannot 
+# fully determine if these lawsuits had an effect.
+
