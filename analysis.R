@@ -11,6 +11,7 @@ View(lawsuits_df)
 
 
 approval_rating_df <- approval_rating_df %>%
+  filter(subgroup == "All polls") %>%
   mutate(modeldate = as.Date(modeldate,"%m/%d/%Y")) %>%
   group_by(modeldate) %>%
   summarise(approve_estimate = mean(approve_estimate),
@@ -18,7 +19,7 @@ approval_rating_df <- approval_rating_df %>%
             approve_lo = mean(approve_lo),
             disapprove_estimate = mean(disapprove_estimate),
             disapprove_hi = mean(disapprove_hi),
-            disapprove_lo = mean(disapprove_lo),
+            disapprove_lo = mean(disapprove_lo)
   )
 View(approval_rating_df)
 #In approval_ratings_df, because there are multiple subgroups, we are summarizing 
@@ -135,17 +136,27 @@ tweet_plot <- ggplot(data = plottable_tweet_df) +
 plot(tweet_plot)  
 
 
+## Section 3 Data Wrangling
+## 1
+# The question is During his presidency, were the legal issues that Trump faced 
+# an indicator of the public perception of him? If so, to what degree?
+# We are looking for any correlation with President Donald Trumps legal issues
+# and his approval rating.
 
+## 2
+# I first mutated the approval rating dataframe to add a column that represents
+# the change in approval rating to the next day. (e.g. 1/1/2020 = 45.5, 
+# 1/2/2020 = 45.6, so the change of 1/1/2020 would be .1). I then joined this 
+# dataframe with the lawsuits dataframe to be bale to compare the effects of 
+# different lawsuits on the approval rating.
+#
+## 3
 
 lawsuits_df <- lawsuits_df %>%
   mutate(dateFiled = as.Date(dateFiled))
 View(lawsuits_df)
 temporary_approval_df <- approval_rating_df %>%
-  group_by(modeldate) %>%
-  summarise(modeldate = mean(modeldate),
-            approve_estimate = mean(approve_estimate),
-            approve_hi = mean(approve_hi),
-            approve_lo = mean(approve_lo))
+  mutate(change_in_approval_of_next_day = lead(approve_estimate) - approve_estimate)
 View(temporary_approval_df)
 colnames(temporary_approval_df)[1] <- "dateFiled"
 lawsuits_to_approval_df <- lawsuits_df %>%
@@ -155,27 +166,65 @@ lawsuits_to_approval_df <- lawsuits_df %>%
   arrange(-desc(dateFiled))
 View(lawsuits_to_approval_df)
 
+
+
+
+
+
+##line + scatter plot for lawsuits to approval rating
+lawsuits_to_approval_plot <- ggplot() +
+  geom_point(data = lawsuits_to_approval_df,mapping = aes(x = dateFiled,y = approve_estimate, fill = "Lawsuits"), color = "red") +
+  geom_line(data = temporary_approval_df, 
+            mapping = aes(x = dateFiled,y = approve_estimate)) +
+  labs(
+    title = "Trump's Lawsuits",
+    x = "Date",
+    y = "Approval Rating",
+    fill = ""
+    
+  ) +
+  scale_y_continuous(labels = function(x) paste0(x, "%")) +
+  scale_fill_brewer(palette = "Dark2")
+  
+plot(lawsuits_to_approval_plot)
+
+
+
+
+
+## scatter plot for approval rating change
+change_in_approval_plot <- ggplot(data = lawsuits_to_approval_df,mapping = aes(x = dateFiled,y = change_in_approval_of_next_day)) +
+  geom_point(mapping = aes(color = ifelse( change_in_approval_of_next_day > 0, "Positive", "Negative"))) +
+  labs(title = "Court Cases Change in Approval Rating",
+       x = "Date",
+       y = "Change in Approval") +
+  scale_y_continuous(labels = function(x) paste0(x, "%")) +
+  scale_color_manual(name="Change", values = c("red","darkgreen")) +
+  guides(color = guide_legend(reverse = TRUE))
+
+
+plot(change_in_approval_plot)
+top_three_postive_changes <- lawsuits_to_approval_df %>%
+  arrange(desc(change_in_approval_of_next_day)) %>%
+  head(n = 3L)
+top_three_negative_changes <- lawsuits_to_approval_df %>%
+  arrange(-desc(change_in_approval_of_next_day)) %>%
+  head(n = 3L)
+changes_in_rating_df <- lawsuits_to_approval_df %>%
+  select(caseName,change_in_approval_of_next_day)
 case_with_lowest_approval <- lawsuits_to_approval_df %>%
   filter(approve_estimate == min(approve_estimate))
 View(case_with_lowest_approval)
 case_with_highest_approval <- lawsuits_to_approval_df %>%
   filter(approve_estimate == max(approve_estimate))
 View(case_with_highest_approval)
+View(changes_in_rating_df)
+View(top_three_negative_changes)
+View(top_three_postive_changes)
 
-lawsuits_to_approval_plot <- ggplot() +
-  geom_point(data = lawsuits_to_approval_df,mapping = aes(x = dateFiled,y = approve_estimate,color = "Court Cases")) +
-  geom_line(data = temporary_approval_df, 
-            mapping = aes(x = dateFiled,y = approve_estimate)) 
-  
-  
-plot(lawsuits_to_approval_plot)
 
-approval_plot <- ggplot(data = temporary_approval_df, 
-                        mapping = aes(x = dateFiled,y = approve_estimate)) +
-  geom_line()
-plot(approval_plot)
-## 1
-# The question is During his presidency, were the legal issues that Trump faced 
-# an indicator of the public perception of him? If so, to what degree?
-# We are looking for any correlation with President Donald Trumps legal issues
-# and his approval rating.
+## 4
+# Through our analysis, we found very few court cases that could have had a 
+# major effect on Trump's approval rating. There was no change above 0.7% within
+# that. The highest postive change was a 0.69048%, followed by 0.57166% and 
+# 0.45039%. 
