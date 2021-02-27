@@ -49,5 +49,4 @@ approval_to_favourites_plot <- ggplot(final_df) +
        y = "Mean Favorites per day",
        fill = "") +
   scale_x_continuous(labels = function(x) paste0(x, "%"))
-plot(approval_to_favourites_plot)
 
