@@ -9,7 +9,6 @@ View(tweets_df)
 View(approval_rating_df)
 View(lawsuits_df)
 
-
 # 1 - Introduction:
 # In this question I will be exploring the trumps approval ratings and rates at which he tweeted. Approval ratings are just what
 # percentage of th US population approve of Tump. The rate at which Trump tweets is generally the amount he tweets in a single
@@ -23,15 +22,30 @@ View(lawsuits_df)
 # show plots and stuff
 
 # 4 - Evaluation:
-# There is a slight correlation between the rise in tweets and a rise the approval rates, however it is not causation.
-# I was expecting a correlation between tweets and approval rates however, I was expecting an increase in tweets to correlate
+# There is a slight correlation between the rise in tweets and a rise the approval rates in this VERY small subset, 
+# of data. Due to this being a small isolated subset it is hard to say that there is any correlation or causation
+# with a lack of very convincing evidence.
+# I was expecting a correlation between tweets and approval rates, and I was expecting an increase in tweets to correlate
 # with a lower approval rate.
 #
+# https://www.usnews.com/news/national-news/articles/2017-12-15/drug-overdose-deaths-continue-to-soar
 # https://en.wikipedia.org/wiki/Portal:Current_events/December_2017
-# For low approval rates in december 2017 most likely cause by legal trouble 
+# During the lowest approval rates in December of 2017 Trump was going through legal trouble and some troubling news
+# Regarding overdoses in the US. The number of overdoses was 
+# by end May 2017 was 66,324, up 17% when compared to the previous 12-month period.
+# and at this same time, A Federal District Judge for Eastern Pennsylvania temporarily enjoins the Trump administration from 
+# implementing new rules that change the Obamacare contraceptive mandate. 
+# California, Delaware, Maryland, Massachusetts, New York, Virginia and Washington have 
+# also sued the federal government over the rules.
 #
-# In just before april 2020 relief bill was released for corona. Resulted in high approval ratings for early
-# april.
+# https://www.cbsnews.com/news/trump-signs-coronavirus-relief-package-today-2020-03-27/
+# 
+# In just before April 2020 a 2 trillion relief bill was approved.
+#
+# ALthough tweeting more in this small subset shows a small correlation between tweeting more in the past week,
+# and higher approval ratings, it is a more likely case that these events surrounding those dates were the
+# cause for approval ratings and the tweets were a reaction to the current events of that time.
+# (High tweet rates in response to good press, low tweet rates in response to bad press)
 
 # save for later
 tweet_date_modified_df <- tweets_df %>% 
@@ -103,7 +117,7 @@ tweet_rates_for_low_approve_plot <- ggplot(num_tweets_on_low_approval_dates_df) 
   labs(x = "Number of tweets", y = "Three Lowest Approval Ratings") +
   ggtitle("Tweet Stats for Lowest Approval Ratings")
 
-tweet_rates_for_low_approve_plot <- ggplot(num_tweets_on_high_approval_dates_df) +
+tweet_rates_for_high_approve_plot <- ggplot(num_tweets_on_high_approval_dates_df) +
   geom_col(aes(x = value, y = as.character(approve_estimate), 
                fill = tweet_values), position = position_dodge2(reverse = FALSE)) +
   scale_fill_manual("Tweets", 
