@@ -78,7 +78,6 @@ In this question I will be exploring the trumps approval ratings and rates at wh
 When doing my analysis I found the top three the highs and lows for Trumps approval ratings.
 Then I found the number of tweets he sent out for those days, and the average of those weeks.
 
-
 There is a slight correlation between the rise in tweets and a rise the approval rates in this VERY small subset, 
 of data. Due to this being a small isolated subset it is hard to say that there is any correlation or causation
 with a lack of very convincing evidence.
