@@ -6,11 +6,12 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE)
 source("analysis2-2.R")
 source("analysis-ben.R")
 source("analysis-troy.R")
 source("analysis-Lance.R")
+source("ayax_analysis.R")
 ```
 
 # Problem Domain
@@ -19,18 +20,38 @@ For our project, we decided to investigate the domain of social media and its im
 
 ## Data Description
 
-Secion 2:
-Waiting for ayax
-1
-2
-3
-4
+### Twitter Data
+The data set is an archive of Donald Trump’s tweets during his presidency, beginning in September 2016 and ending on January 8th 2021 upon his ban from Twitter. The data set is composed of 56,572 tweets along with timestamps of when the tweets were posted as well as retweets/favorites for each tweet. The source of this data set was created by Brendan Patrick Brown, a programmer/engineer from Georgetown University. The following site contains the link to the archive: and the GitHub repository.There are a total of 9 data categories with 5 of the data features being most prominent. The first data feature describes each unique electronic identification number associated with each individual tweet. The “isRetweet” feature then identifies if the tweet listed in the “text” column is an original Trump tweet or if another twitter user retweeted the original tweet. The “isDeleted” column describes whether the tweet it was still available before Trump’s twitter feed before his permanent ban from Twitter on Jan 8th 2021 or if it had been removed from Trump’s twitter page. The “favorites” section shows the amount of individual twitter user’s interaction with the Trump tweet. “Retweets” then builds on favorites and takes it one step further showing additional commitment and a higher-level interaction than favorites. The date column shows the timestamp of when to tweet was posted while the “isFlagged” column shows whether Twitter flagged for misuse of the Twitter platform and in violation of Twitter’s media policy.
+
+The first six rows for `tweets_df` is shown below
+```{r tweets_df,echo = FALSE}
+library(knitr)
+kable(head(tweets_df),n=4L)
+```
+
+### Approval Rating Data
+This data set contains the results of various poll results over his term. The data was retrieved from the FiveThirtyEight GitHub repository. This data was compiled by the opinion poll analyst organization, FiveThirtyEight. We do not know necessarily how the data was collected for each poll that FiveThirtyEight analyzed, as they were collected from various websites, however, we do know FiveThirtyEight has a history of credibility and strict quality when analyzing datasets and poll results. This data set will help when answering all of our questions as a major theme in our analysis is the public perception of the previous president. The first feature of the dataset is the polling topic which in this case is Donald Trump. The second column describes the subgroups that were polled with all polls being a combination of adults and voters, adults being voters over the age of 18, and voters being voters under the age of 18. The third column lists the date the dataset was generated from the origin website. In the fourth feature, it goes over the date for which the approval date started being collected with the fifth feature being the date the approval data stopped being collected. The sixth column goes into the polling organization that compiled the data with the seventh column measuring the health of the data set. In the eighth column, it lists the sample size from which the approval ratings were derived from. The ninth feature of the data set goes into what kind of voter was polled ranging with the following abbreviations carrying the following meanings: A=All adults, RV= Registered Voters, V=Voters, and LV=Likely Voters. The tenth feature describes the weighting system that was used to measure the quality of the polling with negative scores being more favorable and indicating above-average quality polls. In the eleventh column, it goes into the influence? The twelfth column is the approval rating based on the sample size of the conducted poll while the thirteen column approval rating is the disapproval rating drawn on the sample size as the twelfth column. The fourteenth and fifteenth columns describe the approval rating and disapproval rating respectively but are adjusted to reflect an improved and higher-quality rating. Column sixteen describes whether or not there were various versions of the same data set. The seventeen columns describe whether or not the sample size was tracked. In the eighteen column you can find the hyperlink to the original poll. In the eighteenth column, it describes the assigned identification number assigned to each individual poll. The nineteenth column is the number assigned to the series of questions asked with each series of questions having a unique identifier. The twenty-first feature is the date on which? Lastly, the twenty-second column describes the timestamp on which the database was generated.
 
 
-### Summary analysis
+The first six rows for `approval_rating_df` is shown below
+```{r approval_rating_df,echo = FALSE}
+library(knitr)
+kable(head(approval_rating_df),n=4L)
+```
+### Lawsuit Data
+The data set contains all of Trump’s lawsuits leading up to May 31st, 2019. The data was retrieved from FiveThirtyEight’s GitHub repository and was collected by the same company. The data for this CSV file was collected by data mining the internet as this is public information available to everyone. This helps because it provides the data for all of his lawsuits along with their date so we can see how they affect the approval rating trendline above. The first column of this data set lists the docket number associated with the legal dispute between the plaintiff and the defendant. The second column then follows up by listing the date for which the lawsuit was filed. The name of the lawsuit is listed in the third feature of the data set with the name of the plaintiff being listed in the fourth, and the defendant (being Donald J. Trump) being listed in the fifth. The sixth feature of this data set is where the location of the lawsuit took place and was reviewed. The seventh feature describes the previous location column describes if the lawsuit had been reviewed at a previous court before being moved up to the superior court for further review. The eighth column describes whether the case was heard at a state or federal level with the value one indicating federal and the value two indicating state level. In the ninth feature it lists the judge(s) that oversaw the lawsuit.The tenth column goes into listing the PACER code which is a categorical code assigned to cases at the federal level. The eleventh feature goes into whether the case is related to action before Trump became president indicated by a value of one, during Trump’s presidency indicated by a value of two, or a lawsuit aimed at a policy as a result of Trump’s presidency indicated by a value of three. In the twelfth column it describes the type of lawsuit that the plaintiff filed against Donald Trump with a value of one indicating a personal lawsuit, a value of two indicating a lawsuit against his administration, three indicating Trump as a plaintiff, four being Trump’s administration acting as a plaintiff, five being a case directed towards Trump’s associate, and six indicating a category that did not fall into any of the previous ones.  The thirteenth feature describes the type of lawsuit with one indicating a criminal case and two being a civil case. The fourteenth column lists the key issue raised in the case. Column fifteen is the original docket number and the sixteenth column is the status of the case with number one indicating that the case is ongoing and two indicating that the case is closed. 
 
 
-#### Approval Rating
+The first six rows for `lawsuits_df` is shown below
+```{r lawsuits_df,echo = FALSE}
+library(knitr)
+kable(head(lawsuits_df),n=4L)
+```
+
+## Summary analysis
+
+
+### Approval Rating
 
 In our approval rating data, we have `r number_columns_approval` columns labeled  (`r feature_names_approval`).
 The dates of our data range from `r approval_date_range[1]` to `r approval_date_range[2]`. 
@@ -46,9 +67,10 @@ The disapproval rate estimate ranges from `r disapproval_rate_estimate_range[1]`
 plot(disapproval_rate_plot)
 ```
 
-There were no outliers in this data since it is percentages representing the American public's view on the president at the time.
-#### Tweets data
-In our tweets data, we have `r number_columns_tweets`columns labeled  (`r feature_names_tweets`).
+There were no outliers in this data since it is just percentages representing the American public's view on the president at the time.
+
+### Tweets data
+In our tweets data, we have `r number_columns_tweets` columns labeled  (`r feature_names_tweets`).
 The tweets dates ranged from `r tweet_date_range[1]` to `r tweet_date_range[2]`.
 
 The highest amount of favorites Trump got from a tweet was `r tweet_favorites_max`, along with a lowest of `r tweet_favorites_min` (excluding deleted tweets, which all had zero since they were deleted). Similarly with retweets, he had a maximum of `r tweet_retweets_max` and a minimum of `r tweet_retweets_min`.
@@ -60,14 +82,34 @@ plot(tweet_plot)
 
 There are no outliers in this data since it is a collection of tweets posted by the president at the time.
 
-#### Lawsuit data 
-In our tweets data, we have `r number_columns_lawsuits`columns labeled  (`r feature_names_lawsuits`). The lawsuit's dates ranged from `r lawsuit_date_range[1]` to `r lawsuit_date_range[2]` with the total amount of lawsuits being `r total_lawsuits`
+### Lawsuit data 
+In our tweets data, we have `r number_columns_lawsuits` columns labeled  (`r feature_names_lawsuits`). The lawsuit's dates ranged from `r lawsuit_date_range[1]` to `r lawsuit_date_range[2]` with the total amount of lawsuits being `r total_lawsuits`
 
 There are no outliers in this data since it is a collection of lawsuits Trump faced during his presidency.
 
 ## Specific Question Analysis
 
 ### Question 1
+Did Trump’s tweets affect public opinion over the course of his presidency? If so, to what extent?
+
+The data was analyzed by taking the average favorites, retweets, and volume of tweets in a day and the average daily approval rating. After having both sets of data, they were compared to one another to see if a correlation could be established and the degree of correlation between the daily approval rating to the three other variables.
+
+
+
+```{r approval_to_favourites_plot, echo=FALSE}
+plot(approval_to_favourites_plot)
+```
+
+
+The first 6 rows for `final_df` is shown below
+```{r final_df,echo = FALSE}
+library(knitr)
+kable(head(final_df),n=4L)
+```
+
+The sheer volume of tweets had the most correlation with the approval rating with a correlation factor of 28%. The second most impact was the amount of favorites which ended up having a correlation factor of 21.6% correlation with approval ratings. Surprisingly, retweets had the least amount of correlation only coming in with 19.3% correlation to approval rating. 
+
+In conclusion, it was established that there was some correlation between favorites, retweets, volume of tweets and Trump’s daily approval rating. The volume of tweets seemed to have the most impact on the approval rating, with favorites trailing, and retweets being the least correlated with approval rating. It is important that while the figure of approximately twenty percent may seem low it is reflective of a healthy amount of correlation. Had the correlation been high, it would have shown that his Trump’s approval rating is highly correlated with tweets and not other important factors such as policy implementations and media coverage which also influence his approval rating. If his correlation had been lower it would have shown that his tweets have minimal impact on his approval rating which would also be concerning because twitter is an outlet for Trump to voice his public opinion on current issues and a near zero correlation would indicate that the public is in almost complete disregard and indifferent to trump’s twitter usage.
 
 ### Question 2
 
@@ -85,20 +127,20 @@ with a lack of very convincing evidence.
 I was expecting a correlation between tweets and approval rates, and I was expecting an increase in tweets to correlate
 with a lower approval rate.
 
-The first five rows for `num_tweets_on_low_approval_dates_df` is shown below
+The first six rows for `num_tweets_on_low_approval_dates_df` is shown below
 ```{r num_tweets_on_low_approval_dates_df,echo = FALSE}
 library(knitr)
-kable(head(num_tweets_on_low_approval_dates_df),n=5L)
+kable(head(num_tweets_on_low_approval_dates_df),n=4L)
 ```
 
 ```{r tweet_rates_for_low_approve_plot, echo=FALSE}
 plot(tweet_rates_for_low_approve_plot)
 ```
 
-The first five rows for `num_tweets_on_high_approval_dates_df` is shown below
+The first six rows for `num_tweets_on_high_approval_dates_df` is shown below
 ```{r num_tweets_on_high_approval_dates_df,echo = FALSE}
 library(knitr)
-kable(head(num_tweets_on_high_approval_dates_df),n=5L)
+kable(head(num_tweets_on_high_approval_dates_df),n=4L)
 ```
 ```{r tweet_rates_for_high_approve_plot, echo=FALSE}
 plot(tweet_rates_for_high_approve_plot)
@@ -125,11 +167,11 @@ By "social media usage", we mean to analyze the number of tweets and retweets po
 
 Before doing any data wrangling, we had to change the scope of the data; we would be focusing on Twitter activity and approval ratings spanning from the beginning of his presidency (January 23, 2017), to when he was suspended from Twitter (January 8, 2021). We first worked on `tweets_df`; after filtering for this time period, we then calculated for the total number of tweets and retweets in each day. One aspect to note is that Trump did not use Twitter every day, meaning there were gaps in the data. To counter this, we mutated the data to add the days where there were no tweets or retweets posted. In `approval_rating_df`, we once again filtered for the time period, and then filtered for the subgroup "All Polls". Our group decided that rather than focusing on voters or adult, it would be best if we were to use the ratings provided by all polls. This allowed us to get the estimated approval and disapproval ratings. Finally, we joined the two estimated ratings together, compiling one approval rating dataframe, and then joined it with the tweets. 
 
-The first five rows from the data table `combined_approval_rating_df` is shown below:
+The first six rows from the data table `combined_approval_rating_df` is shown below:
 
 ```{r combined_approval_rating_df,echo = FALSE}
 library(knitr)
-kable(head(combined_approval_rating_df),n=5L)
+kable(head(combined_approval_rating_df),n=4L)
 ```
 
 
@@ -156,7 +198,7 @@ The first five rows from the data table `lawsuits_to_approval_df` is shown below
 
 ```{r lawsuits_to_approval_df,echo = FALSE}
 library(knitr)
-kable(head(lawsuits_to_approval_df, n=5L))
+kable(head(lawsuits_to_approval_df, n=4L))
 ```
 
 
