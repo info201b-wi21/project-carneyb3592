@@ -28,50 +28,75 @@ View(approval_rating_df)
 
 ## Approval Rating statistics
 number_columns_approval <- ncol(approval_rating_df)
+
 feature_names_approval <- colnames(approval_rating_df)
+
 approval_date_range <- range(approval_rating_df$modeldate)
+
 approval_rate_estimate_range <- range(approval_rating_df$approve_estimate)
+
 approval_rate_hi_range <- range(approval_rating_df$approve_hi)
+
 approval_rate_lo_range <- range(approval_rating_df$approve_lo)
+
 disapproval_rate_estimate_range <- range(approval_rating_df$disapprove_estimate)
+
 disapproval_rate_hi_range <- range(approval_rating_df$disapprove_hi)
+
 disapproval_rate_lo_range <- range(approval_rating_df$disapprove_lo)
 
 approval_rate_estimate_mean <- mean(approval_rating_df$approve_estimate)
+
 approval_rate_hi_mean <- mean(approval_rating_df$approve_hi)
+
 approval_rate_lo_mean <- mean(approval_rating_df$approve_lo)
+
 disapproval_rate_estimate_mean <- mean(approval_rating_df$disapprove_estimate)
+
 disapproval_rate_hi_mean <- mean(approval_rating_df$disapprove_hi)
+
 disapproval_rate_lo_mean <- mean(approval_rating_df$disapprove_lo)
+
 
 
 ## Tweets data statistics
 number_columns_approval <- ncol(tweets_df)
+
 feature_names_approval <- colnames(tweets_df)
+
 tweet_date_range <- range(tweets_df$date)
+
 tweet_favorites_max <- max(tweets_df$favorites)
+
 tweet_retweets_max <- max(tweets_df$retweets)
+
 tweet_favorites_min <- pull(tweets_df %>%
   filter(date > "2017-01-22" & isDeleted == "f") %>%
   filter(favorites > 0) %>%
   filter(favorites == min(favorites)) %>%
   select(favorites))
+
 tweet_retweets_min <- pull(tweets_df %>%
   filter(date > "2017-01-22" & isDeleted == "f") %>%
   filter(retweets > 0) %>%
   filter(retweets == min(retweets)) %>%
   select(retweets))
+
 retweet_count <- pull(tweets_df %>%
   filter(isRetweet == "t") %>%
   summarise(total_retweets = n()))
+
 delete_count <- pull(tweets_df %>%
   filter(isDeleted == "t") %>%
   summarise(total_deletions = n()))  
 
 ## Lawsuits data statistics
 number_columns_lawsuits <- ncol(lawsuits_df)
+
 feature_names_lawsuits <- colnames(lawsuits_df)
+
 lawsuit_date_range <- range(lawsuits_df$date)
+
 total_lawsuits <- pull(summarise(lawsuits_df,n()))
 
 
@@ -86,6 +111,7 @@ approval_rate_plot <-  ggplot() +
        x = "Date",
        y = "Approval Rating (%)",
        color = "")
+
 plot(approval_rate_plot)
 
 disapproval_rate_plot <-  ggplot() +
@@ -99,7 +125,9 @@ disapproval_rate_plot <-  ggplot() +
        x = "Date",
        y = "Disapproval Rating (%)",
        color = "")
+
 plot(disapproval_rate_plot)
+
 temporary_plottable_tweet_df <- tweets_df %>%
   filter(date > "2017-01-22") %>%
   mutate(date = format(as.Date(date),"%Y")) %>%
@@ -144,26 +172,36 @@ plot(tweet_plot)
 # and his approval rating.
 
 ## 2
-# I first mutated the approval rating dataframe to add a column that represents
+# Before doing any data wrangling on the approval rating data-frame, we had to
+# change our scope of the data. We decided that to use the sub group "All groups"
+# instead of voters and/or adults, as this would best represent the whole. Secondly,
+# we filtered the data for the start of his presidency (January 23, 2017).
+# I first mutated the approval rating data-frame to add a column that represents
 # the change in approval rating to the next day. (e.g. 1/1/2020 = 45.5, 
 # 1/2/2020 = 45.6, so the change of 1/1/2020 would be .1). I then joined this 
-# dataframe with the lawsuits dataframe to be bale to compare the effects of 
+# data-frame with the lawsuits data-frame to be bale to compare the effects of 
 # different lawsuits on the approval rating.
 #
 ## 3
 
 lawsuits_df <- lawsuits_df %>%
   mutate(dateFiled = as.Date(dateFiled))
+
 View(lawsuits_df)
+
 temporary_approval_df <- approval_rating_df %>%
   mutate(change_in_approval_of_next_day = lead(approve_estimate) - approve_estimate)
+
 View(temporary_approval_df)
+
 colnames(temporary_approval_df)[1] <- "dateFiled"
+
 lawsuits_to_approval_df <- lawsuits_df %>%
   summarise(dateFiled,caseName,jurisdiction,capacity,type,issue) %>%
   left_join(temporary_approval_df) %>%
   drop_na(approve_estimate) %>%
   arrange(-desc(dateFiled))
+
 View(lawsuits_to_approval_df)
 
 
@@ -204,36 +242,47 @@ change_in_approval_plot <- ggplot(data = lawsuits_to_approval_df,mapping = aes(x
 
 
 plot(change_in_approval_plot)
+
 top_three_postive_changes <- lawsuits_to_approval_df %>%
   arrange(desc(change_in_approval_of_next_day)) %>%
   head(n = 3L)
+
 top_three_negative_changes <- lawsuits_to_approval_df %>%
   arrange(-desc(change_in_approval_of_next_day)) %>%
   head(n = 3L)
+
 changes_in_rating_df <- lawsuits_to_approval_df %>%
   select(caseName,change_in_approval_of_next_day)
+
 case_with_lowest_approval <- lawsuits_to_approval_df %>%
   filter(approve_estimate == min(approve_estimate))
+
 View(case_with_lowest_approval)
+
 case_with_highest_approval <- lawsuits_to_approval_df %>%
   filter(approve_estimate == max(approve_estimate))
+
 average_change_per_issue <- lawsuits_to_approval_df %>%
   group_by(issue) %>%
   summarise(change_in_approval_of_next_day = mean(abs(change_in_approval_of_next_day)),
             number_of_cases = n()) %>%
   filter(number_of_cases > 2)
+
 amount_of_positive_changes <- lawsuits_to_approval_df %>%
   filter(change_in_approval_of_next_day > 0) %>%
   summarise(amount = n()) %>%
   pull()
+
 amount_of_negative_changes <- lawsuits_to_approval_df %>%
   filter(change_in_approval_of_next_day < 0) %>%
   summarise(amount = n()) %>%
   pull()
+
 amount_of_no_changes <- lawsuits_to_approval_df %>%
   filter(change_in_approval_of_next_day == 0) %>%
   summarise(amount = n()) %>%
   pull()
+
 View(amount_of_positive_changes)
 View(amount_of_no_changes)
 View(average_change_per_issue)
