@@ -5,9 +5,9 @@ library(ggplot2)
 tweets_df = read.csv("data/tweets_01-08-2021.csv")
 approval_rating_df = read.csv("data/approval_topline.csv")
 lawsuits_df = read.csv("data/trump_lawsuits.csv")
-View(tweets_df)
-View(approval_rating_df)
-View(lawsuits_df)
+#View(tweets_df)
+#View(approval_rating_df)
+#View(lawsuits_df)
 
 # 1 - Introduction:
 # In this question I will be exploring the trumps approval ratings and rates at which he tweeted. Approval ratings are just what
@@ -86,7 +86,7 @@ tweets_grouped_day_df <- tweet_date_modified_df %>%
                                 lag(num_tweets, 2)+
                                 lag(num_tweets, 1)
   ) / 7)
-view(tweets_grouped_day_df)
+##View(tweets_grouped_day_df)
 
 ## average daily tweets between 2018 and 2021
 average_daily_tweets <- tweets_grouped_day_df %>% 
@@ -99,14 +99,14 @@ num_tweets_on_low_approval_dates_df <- approval_lows_df %>%
   select(date, approve_estimate, num_tweets, average_past_week) %>% 
   mutate(average_daily_tweets = average_daily_tweets) %>% 
   pivot_longer(cols = c(num_tweets, average_past_week, average_daily_tweets), names_to = "tweet_values")
-view(num_tweets_on_low_approval_dates_df)
+#View(num_tweets_on_low_approval_dates_df)
 
 num_tweets_on_high_approval_dates_df <- approval_highs_df %>% 
   left_join(tweets_grouped_day_df) %>% 
   select(date, approve_estimate, num_tweets, average_past_week) %>% 
   mutate(average_daily_tweets = average_daily_tweets) %>% 
   pivot_longer(cols = c(num_tweets, average_past_week, average_daily_tweets), names_to = "tweet_values")
-view(num_tweets_on_high_approval_dates_df)
+#View(num_tweets_on_high_approval_dates_df)
 
 tweet_rates_for_low_approve_plot <- ggplot(num_tweets_on_low_approval_dates_df) +
   geom_col(aes(x = value, y = as.character(approve_estimate), 

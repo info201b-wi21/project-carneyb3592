@@ -1,5 +1,5 @@
 ---
-title: "index"
+title: "INFO 201 Course Project"
 author: "Benjamin Carney, Troy lu, Lance Haugen, Ayax Franco"
 date: "2/26/2021"
 output: html_document
@@ -7,8 +7,10 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+source("analysis2-2.R")
 source("analysis-ben.R")
 source("analysis-troy.R")
+source("analysis-Lance.R")
 ```
 
 # Problem Domain
@@ -68,6 +70,52 @@ There are no outliers in this data since it is a collection of lawsuits Trump fa
 ### Question 1
 
 ### Question 2
+
+When were Trump's approval ratings at all time lows and at all time highs and how much was he tweeting in that time period? What major events were happening in that time period?
+
+In this question I will be exploring the trumps approval ratings and rates at which he tweeted. Approval ratings are just what percentage of th US population approve of Tump. The rate at which Trump tweets is generally the amount he tweets in a single day. 
+
+When doing my analysis I found the top three the highs and lows for Trumps approval ratings.
+Then I found the number of tweets he sent out for those days, and the average of those weeks.
+
+
+There is a slight correlation between the rise in tweets and a rise the approval rates in this VERY small subset, 
+of data. Due to this being a small isolated subset it is hard to say that there is any correlation or causation
+with a lack of very convincing evidence.
+I was expecting a correlation between tweets and approval rates, and I was expecting an increase in tweets to correlate
+with a lower approval rate.
+
+The first five rows for `num_tweets_on_low_approval_dates_df` is shown below
+```{r num_tweets_on_low_approval_dates_df,echo = FALSE}
+library(knitr)
+kable(head(num_tweets_on_low_approval_dates_df),n=5L)
+```
+
+```{r tweet_rates_for_low_approve_plot, echo=FALSE}
+plot(tweet_rates_for_low_approve_plot)
+```
+
+The first five rows for `num_tweets_on_high_approval_dates_df` is shown below
+```{r num_tweets_on_high_approval_dates_df,echo = FALSE}
+library(knitr)
+kable(head(num_tweets_on_high_approval_dates_df),n=5L)
+```
+```{r tweet_rates_for_high_approve_plot, echo=FALSE}
+plot(tweet_rates_for_high_approve_plot)
+```
+
+During the lowest approval rates in December of 2017 Trump was going through legal trouble and some troubling news
+[Regarding overdoses in the US](https://www.usnews.com/news/national-news/articles/2017-12-15/drug-overdose-deaths-continue-to-soar). The number of overdoses was 
+by end May 2017 was 66,324, up 17% when compared to the previous 12-month period.
+and at this same time, [A Federal District Judge for Eastern Pennsylvania temporarily enjoins the Trump administration from implementing new rules that change the Obamacare contraceptive mandate](https://en.wikipedia.org/wiki/Portal:Current_events/December_2017). 
+California, Delaware, Maryland, Massachusetts, New York, Virginia and Washington have 
+also sued the federal government over the rules.
+In just before April 2020 a [2 trillion relief bill was approved](https://www.cbsnews.com/news/trump-signs-coronavirus-relief-package-today-2020-03-27/).
+ALthough tweeting more in this small subset shows a small correlation between tweeting more in the past week,
+and higher approval ratings, it is a more likely case that these events surrounding those dates were the
+cause for approval ratings and the tweets were a reaction to the current events of that time.
+(High tweet rates in response to good press, low tweet rates in response to bad press)
+
 
 ### Question 3
 Did Trump's social media usage change the approval ratings of his voters? 
