@@ -1,16 +1,13 @@
-<<<<<<< HEAD
 library("dplyr")
 library("tidyr")
 library("ggplot2")
-||||||| b31b26f
-=======
+
 # loading packages and dfs
 library("tidyverse")
 library("ggplot2")
->>>>>>> troy-branch
 tweets_df = read.csv("data/tweets_01-08-2021.csv")
 approval_rating_df = read.csv("data/approval_topline.csv")
-<<<<<<< HEAD
+
 lawsuits_df = read.csv("data/trump_lawsuits.csv")
 View(tweets_df)
 View(approval_rating_df)
@@ -328,19 +325,7 @@ View(top_three_postive_changes)
 # are a variety of factors that could have played into the change and we cannot 
 # fully determine if these lawsuits had an effect.
 
-||||||| b31b26f
-lawsuits_df = read.csv("data/trump_lawsuits.csv")
-View(tweets_df)
-View(approval_rating_df)
-View(lawsuits_df)
-=======
-
-
 # changes modeldate column from char class to date class
-approval_rating_df <- approval_rating_df %>%
-  mutate(modeldate = as.Date(modeldate,"%m/%d/%Y"))
-
-
 tweets_df <- tweets_df %>%
                 mutate(date = as.Date(date))
 
@@ -383,16 +368,14 @@ total_num_of_re_tweets_per_day_df <- left_join(num_of_retweets_per_day_df, num_o
 approval_estimate_rating_df <- approval_rating_df %>%
                                     filter(modeldate > "2017-01-22") %>%
                                       group_by(modeldate) %>%
-                                        filter(subgroup == "All polls") %>%
-                                          select(modeldate, approve_estimate)
+                                        select(modeldate, approve_estimate)
                                         
 
 # DISAPPROVAL ESTIMATE
 disapproval_estimate_rating_df <- approval_rating_df %>%
                                         filter(modeldate > "2017-01-22") %>%
                                           group_by(modeldate) %>%
-                                            filter(subgroup == "All polls") %>%
-                                                select(modeldate, disapprove_estimate)
+                                           select(modeldate, disapprove_estimate)
 
 # JOINING DFs
 combined_approval_rating_df <- left_join(approval_estimate_rating_df, disapproval_estimate_rating_df) %>%
@@ -458,4 +441,3 @@ disapproval_re_tweet_plot <- ggplot(combined_approval_rating_df) +
 # we once again noticed that his disapproval ratings were stagnant; Trump's disapproval rating peaked (57.50006%) in December 16, 2017, when he was rarely tweeting (8 tweets).
 # As mentioned earlier, Trump began to tweet much more frequently in the second half of his presidency, 2019-2020, yet his disapproval rating stayed in the low fifties. 
 # Taking all of this into consideration, we have come to the conclusion that there isn't a relationship between Trump's tweeting activity and his approval rating. 
->>>>>>> troy-branch
