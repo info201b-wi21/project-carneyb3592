@@ -9,9 +9,9 @@ tweets_df = read.csv("data/tweets_01-08-2021.csv")
 approval_rating_df = read.csv("data/approval_topline.csv")
 
 lawsuits_df = read.csv("data/trump_lawsuits.csv")
-View(tweets_df)
-View(approval_rating_df)
-View(lawsuits_df)
+##View(tweets_df)
+##View(approval_rating_df)
+#View(lawsuits_df)
 
 
 
@@ -26,7 +26,7 @@ approval_rating_df <- approval_rating_df %>%
             disapprove_hi = mean(disapprove_hi),
             disapprove_lo = mean(disapprove_lo)
   )
-View(approval_rating_df)
+#View(approval_rating_df)
 #In approval_ratings_df, because there are multiple subgroups, we are summarizing 
 #the values given to find the mean out of the three subgroups: voter, adults, and all polls
 
@@ -65,9 +65,13 @@ disapproval_rate_lo_mean <- mean(approval_rating_df$disapprove_lo)
 
 
 ## Tweets data statistics
-number_columns_approval <- ncol(tweets_df)
+number_columns_tweets <- ncol(tweets_df)
 
-feature_names_approval <- colnames(tweets_df)
+feature_names_tweets <- colnames(tweets_df)
+
+total_tweets <- tweets_df %>%
+  summarise(tweets = n()) %>%
+  pull()
 
 tweet_date_range <- range(tweets_df$date)
 
@@ -114,22 +118,24 @@ approval_rate_plot <-  ggplot() +
             mapping = aes(x = modeldate,y = approve_lo, color = "Approval Low")) +
   labs(title = "Trump Approval Rating Over Time",
        x = "Date",
-       y = "Approval Rating (%)",
-       color = "")
+       y = "Approval Rating",
+       color = "") +
+scale_y_continuous(labels = function(x) paste0(x, "%")) 
 
 plot(approval_rate_plot)
 
 disapproval_rate_plot <-  ggplot() +
   geom_line(data = approval_rating_df, 
-            mapping = aes(x = modeldate,y = disapprove_estimate, color = "Approval Estimate")) +
+            mapping = aes(x = modeldate,y = disapprove_estimate, color = "Disapproval Estimate")) +
   geom_line(data = approval_rating_df, 
-            mapping = aes(x = modeldate,y = disapprove_hi, color = "Approval High")) +
+            mapping = aes(x = modeldate,y = disapprove_hi, color = "Disapproval High")) +
   geom_line(data = approval_rating_df, 
-            mapping = aes(x = modeldate,y = disapprove_lo, color = "Approval Low")) +
+            mapping = aes(x = modeldate,y = disapprove_lo, color = "Disapproval Low")) +
   labs(title = "Trump Disapproval Rating Over Time",
        x = "Date",
-       y = "Disapproval Rating (%)",
-       color = "")
+       y = "Disapproval Rating",
+       color = "") +
+  scale_y_continuous(labels = function(x) paste0(x, "%")) 
 
 plot(disapproval_rate_plot)
 
@@ -150,7 +156,7 @@ plottable_tweet_df <- tweets_df %>%
   pivot_longer(cols = !date)
 
 
-View(plottable_tweet_df)
+#View(plottable_tweet_df)
 
 tweet_plot <- ggplot(data = plottable_tweet_df) +
   geom_col(mapping = aes(x = date, y = value, fill = name), 
@@ -192,12 +198,12 @@ plot(tweet_plot)
 lawsuits_df <- lawsuits_df %>%
   mutate(dateFiled = as.Date(dateFiled))
 
-View(lawsuits_df)
+#View(lawsuits_df)
 
 temporary_approval_df <- approval_rating_df %>%
   mutate(change_in_approval_of_next_day = lead(approve_estimate) - approve_estimate)
 
-View(temporary_approval_df)
+#View(temporary_approval_df)
 
 colnames(temporary_approval_df)[1] <- "dateFiled"
 
@@ -207,7 +213,7 @@ lawsuits_to_approval_df <- lawsuits_df %>%
   drop_na(approve_estimate) %>%
   arrange(-desc(dateFiled))
 
-View(lawsuits_to_approval_df)
+#View(lawsuits_to_approval_df)
 
 
 
@@ -248,13 +254,20 @@ change_in_approval_plot <- ggplot(data = lawsuits_to_approval_df,mapping = aes(x
 
 plot(change_in_approval_plot)
 
-top_three_postive_changes <- lawsuits_to_approval_df %>%
+top_three_positive_changes <- lawsuits_to_approval_df %>%
   arrange(desc(change_in_approval_of_next_day)) %>%
-  head(n = 3L)
+  head(n = 3L) %>%
+  select(caseName,change_in_approval_of_next_day)
+colnames(top_three_positive_changes)[1] <- "Case Name"
+colnames(top_three_positive_changes)[2] <- "Change in Approval Rating (%)"
 
 top_three_negative_changes <- lawsuits_to_approval_df %>%
   arrange(-desc(change_in_approval_of_next_day)) %>%
-  head(n = 3L)
+  head(n = 3L) %>%
+  select(caseName,change_in_approval_of_next_day)
+colnames(top_three_negative_changes)[1] <- "Case Name"
+colnames(top_three_negative_changes)[2] <- "Change in Approval Rating (%)"
+
 
 changes_in_rating_df <- lawsuits_to_approval_df %>%
   select(caseName,change_in_approval_of_next_day)
@@ -262,7 +275,7 @@ changes_in_rating_df <- lawsuits_to_approval_df %>%
 case_with_lowest_approval <- lawsuits_to_approval_df %>%
   filter(approve_estimate == min(approve_estimate))
 
-View(case_with_lowest_approval)
+#View(case_with_lowest_approval)
 
 case_with_highest_approval <- lawsuits_to_approval_df %>%
   filter(approve_estimate == max(approve_estimate))
@@ -271,8 +284,10 @@ average_change_per_issue <- lawsuits_to_approval_df %>%
   group_by(issue) %>%
   summarise(change_in_approval_of_next_day = mean(abs(change_in_approval_of_next_day)),
             number_of_cases = n()) %>%
-  filter(number_of_cases > 2)
-
+  arrange(desc(change_in_approval_of_next_day))
+colnames(average_change_per_issue)[1] <- "Issue"
+colnames(average_change_per_issue)[2] <- "Change in Approval Rating (%)"
+colnames(average_change_per_issue)[3] <- "Amount of Cases"
 amount_of_positive_changes <- lawsuits_to_approval_df %>%
   filter(change_in_approval_of_next_day > 0) %>%
   summarise(amount = n()) %>%
@@ -288,13 +303,13 @@ amount_of_no_changes <- lawsuits_to_approval_df %>%
   summarise(amount = n()) %>%
   pull()
 
-View(amount_of_positive_changes)
-View(amount_of_no_changes)
-View(average_change_per_issue)
-View(case_with_highest_approval)
-View(changes_in_rating_df)
-View(top_three_negative_changes)
-View(top_three_postive_changes)
+#View(amount_of_positive_changes)
+#View(amount_of_no_changes)
+#View(average_change_per_issue)
+#View(case_with_highest_approval)
+#View(changes_in_rating_df)
+#View(top_three_negative_changes)
+#View(top_three_postive_changes)
 
 
 ## 4
@@ -325,119 +340,3 @@ View(top_three_postive_changes)
 # are a variety of factors that could have played into the change and we cannot 
 # fully determine if these lawsuits had an effect.
 
-# changes modeldate column from char class to date class
-tweets_df <- tweets_df %>%
-                mutate(date = as.Date(date))
-
-# note: first approval-rating date recorded is 01/23/2017
-
-
-# Data Wrangling for Finding the number of actions (tweets/retweets) Trump used per month, INCLUDING DELETED TWEETS
-
-
-num_of_tweets_per_day_df <- tweets_df %>%
-                                filter(isRetweet == "f") %>%
-                                    filter(date > "2017-01-22") %>%
-                                      group_by(date) %>%
-                                        mutate(date = format(date, "%Y-%m-%d")) %>%
-                                          mutate(date = as.Date(date)) %>%
-                                            summarize(num_of_tweets_per_day = n()) %>%
-                                              complete(date = seq.Date(min(as.Date("2017-01-23")), max(date), by = "day")) %>%       # adds in missing dates to make it possible for left_join
-                                                mutate(num_of_tweets_per_day = replace_na(num_of_tweets_per_day, 0))                 # replaces na values for 0
-
-num_of_retweets_per_day_df <- tweets_df %>%
-                                  filter(isRetweet == "t") %>%
-                                    filter(date > "2017-01-22") %>%
-                                      group_by(date) %>%
-                                        mutate(date = format(date, "%Y-%m-%d")) %>%
-                                          mutate(date = as.Date(date)) %>%
-                                            group_by(date) %>%
-                                              summarize(num_of_retweets_per_day = n()) %>%
-                                                complete(date = seq.Date(min(as.Date("2017-01-23")), max(as.Date("2021-01-08")), by = "day")) %>%       
-                                                  mutate(num_of_retweets_per_day = replace_na(num_of_retweets_per_day, 0))
-
-
-
-total_num_of_re_tweets_per_day_df <- left_join(num_of_retweets_per_day_df, num_of_tweets_per_day_df) %>%
-                                        summarize(date, total_re_tweets = num_of_retweets_per_day + num_of_tweets_per_day) # calculate total number of tweets and retweets for each day 
-
-
-
-
-# APPROVAL ESTIMATE
-approval_estimate_rating_df <- approval_rating_df %>%
-                                    filter(modeldate > "2017-01-22") %>%
-                                      group_by(modeldate) %>%
-                                        select(modeldate, approve_estimate)
-                                        
-
-# DISAPPROVAL ESTIMATE
-disapproval_estimate_rating_df <- approval_rating_df %>%
-                                        filter(modeldate > "2017-01-22") %>%
-                                          group_by(modeldate) %>%
-                                           select(modeldate, disapprove_estimate)
-
-# JOINING DFs
-combined_approval_rating_df <- left_join(approval_estimate_rating_df, disapproval_estimate_rating_df) %>%
-                                group_by(modeldate) %>%
-                                  rename(date = modeldate) 
-                                    
-
-combined_approval_rating_df <- left_join(total_num_of_re_tweets_per_day_df, combined_approval_rating_df, by = "date") %>%
-                                  select(date, total_re_tweets, approve_estimate, disapprove_estimate)
-
-
-# PLOT
-approval_re_tweet_plot <- ggplot(combined_approval_rating_df) +
-                   geom_col(mapping = aes(x = date, y = approve_estimate, fill = "Approval Rating"), width = 1) + 
-                    geom_col(mapping = aes(x = date, y = total_re_tweets, fill = "Tweets/Retweets"), width = 1) + 
-                      scale_y_continuous(sec.axis = sec_axis(~.*1, name = "Number of Tweets/Retweets")) + 
-                        scale_fill_brewer(palette = "Paired")+
-                        labs(title = "Former President Trump's Twitter Activity in Relation To His Approval Rating, January 2017 - January 2021",
-                             x = "Year",
-                             y = "Approval Rate (%)",
-                             fill = "") 
-
-
-disapproval_re_tweet_plot <- ggplot(combined_approval_rating_df) +
-                              geom_col(mapping = aes(x = date, y = disapprove_estimate, fill = "Disapproval Rating"), width = 1) + 
-                                geom_col(mapping = aes(x = date, y = total_re_tweets, fill = "Tweets/Retweets"), width = 1) + 
-                                  scale_y_continuous(sec.axis = sec_axis(~.*1, name = "Number of Tweets/Retweets")) + 
-                                    scale_fill_manual(values = c("#FF9E99", "#1F78B4"))+
-                                      labs(title = "Former President Trump's Twitter Activity in Relation To His Disapproval Rating, January 2017 - January 2021",
-                                           x = "Year",
-                                           y = "Disapproval Rate (%)",
-                                           fill = "") 
-
-
-
-################################### Questions
-
-# My Question: Did Trump's social media usage change the approval ratings of his voters? 
-# If so, by how much and what indicators point towards the change?.
-
-# 1. 
-# By "social media usage", we mean to analyze the number of tweets and retweets posted by @realDonaldTrump, and we will be examining 
-# its relationship with former President Trump's approval and disapproval ratings. For this question, we will be counting deleted
-# tweets and retweets, since they are still purposefully posted online. 
-
-# 2. 
-# Before doing any data wrangling, we had to change the scope of the data; we would be focusing on Twitter activity and approval ratings spanning from
-# the beginning of his presidency (January 23, 2017), to when he was suspended from Twitter (January 8, 2021). We first worked on `tweets_df`; after filtering for this time period, we then 
-# calculated for the total number of tweets and retweets in each day. One aspect to note is that Trump did not use Twitter every day, meaning there were gaps in
-# the data. To counter this, we mutated the data to add the days where there were no tweets or retweets posted. In `approval_rating_df`, we once again filtered for the time period, and then
-# filtered for the subgroup "All Polls". Our group decided that rather than focusing on voters or adult, it would be best if we were to use the ratings provided by all polls. This allowed us
-# to get the estimated approval and disapproval ratings. Finally, we joined the two estimated ratings together, compiling one approval rating dataframe, and then joined it with the tweets. 
-
-# 3. 
-#See plots above
-
-# 4. 
-# According to our data and visualizations, there doesn't seem to be any evident correlation between the number of tweets/retweets and approval rating. 
-# Although the number of posts has increased significantly during Trump's presidency, his approval rate has remained quite stagnant. 
-# Trump's lowest approval rating was 36.40314%, which occurred on December 16, 2017. His highest, 47.76497%, happened on January 25, 2017. 
-# For the majority of his presidency, however, Trump's approval rating remained in the low 40s, sometimes dipping into the high 30s. 
-# Even in the moments where Trump was posting hundreds of tweets and retweets, his approval rating stayed in the low 40s. In our other plot that examined Trump's disapproval rating,
-# we once again noticed that his disapproval ratings were stagnant; Trump's disapproval rating peaked (57.50006%) in December 16, 2017, when he was rarely tweeting (8 tweets).
-# As mentioned earlier, Trump began to tweet much more frequently in the second half of his presidency, 2019-2020, yet his disapproval rating stayed in the low fifties. 
-# Taking all of this into consideration, we have come to the conclusion that there isn't a relationship between Trump's tweeting activity and his approval rating. 

@@ -7,6 +7,138 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-source(analysis.R)
+source("analysis.R")
 ```
 
+# Problem Domain
+
+For our project, we decided to investigate the domain of social media and its impact on U.S. politics, specifically focusing on the presidency. Within this domain, we intend on analyzing former president Donald Trump’s Twitter account and all of his “tweets”. Twitter is a widely used social media platform where users can write 280-character long messages (in the form of “tweets”) for other Twitter users to read. When other Twitter users view a tweet, they have the option to “like”, reply to the tweet, or “quote-retweet” (retweeting with an added comment); all of these options count as an “interaction”, so the number of interactions that a tweet has is an indicator of how many people legitimately viewed it. The president is given an official Twitter account under the alias **@POTUS** and has the ability to adopt “followers” from the previous president’s Twitter account. When Trump became president in 2016, he took the “followers”, giving the Twitter account a large boost in interactions. Throughout his presidency, however, he still used his personal account **@realDonaldTrump**, which we will be analyzing for this project.
+
+## Data Description
+
+Secion 2:
+Waiting for ayax
+1
+2
+3
+4
+
+
+### Summary analysis
+
+
+#### Approval Rating
+
+In our approval rating data, we have `r number_columns_approval` columns labeled  (`r feature_names_approval`).
+The dates of our data range from `r approval_date_range[1]` to `r approval_date_range[2]`. 
+
+The approval rate estimate ranges from `r approval_rate_estimate_range[1]`% to `r approval_rate_estimate_range[2]`% with a mean of `r approval_rate_estimate_mean`%. The highs and lows range from (`r approval_rate_hi_range[1]`% to `r approval_rate_hi_range[2]`%) and (`r approval_rate_lo_range[1]`% to `r approval_rate_lo_range[2]`%) respectively, with means of `r approval_rate_hi_mean`% and `r approval_rate_lo_mean`%
+```{r approval_rate_plot, echo=FALSE}
+plot(approval_rate_plot)
+```
+
+The disapproval rate estimate ranges from `r disapproval_rate_estimate_range[1]`% to `r disapproval_rate_estimate_range[2]`% with a mean of `r disapproval_rate_estimate_mean`%. The highs and lows range from (`r disapproval_rate_hi_range[1]`% to `r disapproval_rate_hi_range[2]`%) and (`r disapproval_rate_lo_range[1]`% to `r disapproval_rate_lo_range[2]`%) respectively, with means of `r disapproval_rate_hi_mean`% and `r disapproval_rate_lo_mean`%.
+
+```{r disapproval_rate_plot, echo=FALSE}
+plot(disapproval_rate_plot)
+```
+
+There were no outliers in this data since it is percentages representing the American public's view on the president at the time.
+#### Tweets data
+In our tweets data, we have `r number_columns_tweets`columns labeled  (`r feature_names_tweets`).
+The tweets dates ranged from `r tweet_date_range[1]` to `r tweet_date_range[2]`.
+
+The highest amount of favorites Trump got from a tweet was `r tweet_favorites_max`, along with a lowest of `r tweet_favorites_min` (excluding deleted tweets, which all had zero since they were deleted). Similarly with retweets, he had a maximum of `r tweet_retweets_max` and a minimum of `r tweet_retweets_min`.
+Out of all `r total_tweets` tweets in the data, `r retweet_count` were retweets and `r delete_count` were deleted. 
+
+```{r tweet_plot, echo=FALSE}
+plot(tweet_plot)
+```
+
+There are no outliers in this data since it is a collection of tweets posted by the president at the time.
+
+#### Lawsuit data 
+In our tweets data, we have `r number_columns_lawsuits`columns labeled  (`r feature_names_lawsuits`). The lawsuit's dates ranged from `r lawsuit_date_range[1]` to `r lawsuit_date_range[2]` with the total amount of lawsuits being `r total_lawsuits`
+
+There are no outliers in this data since it is a collection of lawsuits Trump faced during his presidency.
+
+## Specific Question Analysis
+
+### Question 1
+
+### Question 2
+
+### Question 3
+Did Trump's social media usage change the approval ratings of his voters? 
+If so, by how much and what indicators point towards the change?.
+
+By "social media usage", we mean to analyze the number of tweets and retweets posted by @realDonaldTrump, and we will be examining its relationship with former President Trump's approval and disapproval ratings. For this question, we will be counting deleted tweets and retweets, since they are still purposefully posted online. 
+
+Before doing any data wrangling, we had to change the scope of the data; we would be focusing on Twitter activity and approval ratings spanning from the beginning of his presidency (January 23, 2017), to when he was suspended from Twitter (January 8, 2021). We first worked on `tweets_df`; after filtering for this time period, we then calculated for the total number of tweets and retweets in each day. One aspect to note is that Trump did not use Twitter every day, meaning there were gaps in the data. To counter this, we mutated the data to add the days where there were no tweets or retweets posted. In `approval_rating_df`, we once again filtered for the time period, and then filtered for the subgroup "All Polls". Our group decided that rather than focusing on voters or adult, it would be best if we were to use the ratings provided by all polls. This allowed us to get the estimated approval and disapproval ratings. Finally, we joined the two estimated ratings together, compiling one approval rating dataframe, and then joined it with the tweets. 
+
+The first five rows from the data table `combined_approval_rating_df` is shown below:
+
+```{r combined_approval_rating_df,echo = FALSE}
+library(knitr)
+kable(head(combined_approval_rating_df),n=5L)
+```
+
+
+```{r approval_re_tweet_plot, echo=FALSE}
+plot(approval_re_tweet_plot)
+```
+
+```{r disapproval_re_tweet_plot, echo=FALSE}
+plot(disapproval_re_tweet_plot)
+```
+
+According to our data and visualizations, there doesn't seem to be any evident correlation between the number of tweets/retweets and approval rating. Although the number of posts has increased significantly during Trump's presidency, his approval rate has remained quite stagnant. Trump's lowest approval rating was 36.40314%, which occurred on December 16, 2017. His highest, 47.76497%, happened on January 25, 2017. For the majority of his presidency, however, Trump's approval rating remained in the low 40s, sometimes dipping into the high 30s. Even in the moments where Trump was posting hundreds of tweets and retweets, his approval rating stayed in the low 40s. In our other plot that examined Trump's disapproval rating,we once again noticed that his disapproval ratings were stagnant; Trump's disapproval rating peaked (57.50006%) in December 16, 2017, when he was rarely tweeting (8 tweets).As mentioned earlier, Trump began to tweet much more frequently in the second half of his presidency, 2019-2020, yet his disapproval rating stayed in the low fifties. Taking all of this into consideration, we have come to the conclusion that there isn't a relationship between Trump's tweeting activity and his approval rating. 
+
+
+### Question 4
+The question is "During his presidency, were the legal issues that Trump faced an indicator of the public perception of him? If so, to what degree?"
+We are looking for any correlation with President Donald Trumps legal issues and his approval rating.
+
+Before doing any data wrangling on the approval rating data-frame, we had to change our scope of the data. We decided that to use the sub group "All groups"instead of voters and/or adults, as this would best represent the whole. Secondly, filtered the data for the start of his presidency (January 23, 2017).I first mutated the approval rating data-frame to add a column that represents the change in approval rating to the next day. (e.g. 1/1/2020 = 45.5, 1/2/2020 = 45.6, so the change of 1/1/2020 would be .1). I then joined this data-frame with the lawsuits data-frame to be bale to compare the effects of different lawsuits on the approval rating.
+
+Through our data wrangling, we found a variety of information. The case linked with the high approval rating was "`r case_with_highest_approval$caseName`" with an approval rate of `r case_with_highest_approval$approve_estimate`%. The case linked with the lowest approval rating was "`r case_with_lowest_approval$caseName`" with an approval rate of `r case_with_lowest_approval$approve_estimate`%. When linked to the approval rating change the case could have caused, we found `r amount_of_positive_changes` positive changes, `r amount_of_negative_changes` negative changes, and `r amount_of_no_changes` changes that had no effect.
+
+The first five rows from the data table `lawsuits_to_approval_df` is shown below:
+
+```{r lawsuits_to_approval_df,echo = FALSE}
+library(knitr)
+kable(head(lawsuits_to_approval_df, n=5L))
+```
+
+
+```{r lawsuits_to_approval_plot, echo=FALSE}
+plot(lawsuits_to_approval_plot)
+```
+
+```{r change_in_approval_plot, echo=FALSE}
+plot(change_in_approval_plot)
+```
+
+The cases with the top three positive changes were as follows:
+```{r positive_changes_table,echo = FALSE}
+library(knitr)
+kable(top_three_positive_changes)
+```
+
+The cases with the top three negative changes were as follows:
+```{r negative_changes_table,echo = FALSE}
+library(knitr)
+kable(top_three_negative_changes)
+```
+**(NOTE: There is a possibility of the cases being labeled the same, even though they are seperate cases, just same parties involved)**
+
+
+
+The average (absolute) change per issue was found as follows:
+```{r Issue_table,echo = FALSE}
+library(knitr)
+kable(average_change_per_issue)
+```
+
+
+Through our analysis, we found very few court cases that could have had a major effect on Trump's approval rating. There was no change above 0.7% within that. The greatest positive change was a 0.69048%, followed by 0.57166% and 0.45039%. The greatest negative changes were -0.62866%,-0.36466%, and -0.25494%. Since Trump's approval rating remained relatively stagnant throughout his presidency at around low 40s, we have come to the conclusion that very few, almost none had an effect, since Trump's approval rating was likely shifted by various other factors. We have determine that if any cases had an effect, it would likely be ones with above 0.5% change in approval rating of the next day,which concluded to be PEN America v. Trump, Clifford v. Trump, and California v. Ross. When researching these lawsuits online, we found a variety of major news articles for PEN America v. Trump,yet none for the others. We can only then assume that the only lawsuit that had a significant effect on Trump's approval rating was PEN America v. Trump. However, this is only accounting for the court case, at the same time, there were news articles on the day the case filed about [Trump's attack on Stephanie Clifford about her "Horseface"](https://www.nytimes.com/2018/10/16/us/politics/trump-women-insults.html). When examining the relationship between the type of cases and change in approval rating, we found that cases regarding 2016 Trump campaign and Census issues had the highest average change at 0.27683% and 0.24039333%. While these were not the highest values overall, they were the highest for issues with more than two cases, as 1-2 cases could lead to skewed results. We also found that there was almost an exact 1:1 ratio (24:26) of positive to negative changes with three at exactly 0. Overall, we can see little to no correlation with Trump's lawsuits and his approval rating. While some cases appear to have an effect, there a variety of factors that could have played into the change and we cannot fully determine if these lawsuits had an effect.
