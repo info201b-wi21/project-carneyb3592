@@ -7,11 +7,17 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,warning = FALSE)
+
+
+
+
 source("analysis2-2.R")
 source("analysis-ben.R")
 source("analysis-troy.R")
 source("analysis-Lance.R")
 source("ayax_analysis.R")
+
+
 ```
 
 # Problem Domain
@@ -21,6 +27,9 @@ For our project, we decided to investigate the domain of social media and its im
 ## Data Description
 
 ### Twitter Data
+
+[Data Set](https://www.thetrumparchive.com)
+
 The data set is an archive of Donald Trump’s tweets during his presidency, beginning in September 2016 and ending on January 8th 2021 upon his ban from Twitter. The data set is composed of 56,572 tweets along with timestamps of when the tweets were posted as well as retweets/favorites for each tweet. The source of this data set was created by Brendan Patrick Brown, a programmer/engineer from Georgetown University. The following site contains the link to the archive: and the GitHub repository.There are a total of 9 data categories with 5 of the data features being most prominent. The first data feature describes each unique electronic identification number associated with each individual tweet. The “isRetweet” feature then identifies if the tweet listed in the “text” column is an original Trump tweet or if another twitter user retweeted the original tweet. The “isDeleted” column describes whether the tweet it was still available before Trump’s twitter feed before his permanent ban from Twitter on Jan 8th 2021 or if it had been removed from Trump’s twitter page. The “favorites” section shows the amount of individual twitter user’s interaction with the Trump tweet. “Retweets” then builds on favorites and takes it one step further showing additional commitment and a higher-level interaction than favorites. The date column shows the timestamp of when to tweet was posted while the “isFlagged” column shows whether Twitter flagged for misuse of the Twitter platform and in violation of Twitter’s media policy.
 
 The first six rows for `tweets_df` is shown below
@@ -30,6 +39,9 @@ kable(head(tweets_df),n=4L)
 ```
 
 ### Approval Rating Data
+
+[Data Set](https://github.com/fivethirtyeight/data/tree/master/trump-approval-ratings)
+
 This data set contains the results of various poll results over his term. The data was retrieved from the FiveThirtyEight GitHub repository. This data was compiled by the opinion poll analyst organization, FiveThirtyEight. We do not know necessarily how the data was collected for each poll that FiveThirtyEight analyzed, as they were collected from various websites, however, we do know FiveThirtyEight has a history of credibility and strict quality when analyzing datasets and poll results. This data set will help when answering all of our questions as a major theme in our analysis is the public perception of the previous president. The first feature of the dataset is the polling topic which in this case is Donald Trump. The second column describes the subgroups that were polled with all polls being a combination of adults and voters, adults being voters over the age of 18, and voters being voters under the age of 18. The third column lists the date the dataset was generated from the origin website. In the fourth feature, it goes over the date for which the approval date started being collected with the fifth feature being the date the approval data stopped being collected. The sixth column goes into the polling organization that compiled the data with the seventh column measuring the health of the data set. In the eighth column, it lists the sample size from which the approval ratings were derived from. The ninth feature of the data set goes into what kind of voter was polled ranging with the following abbreviations carrying the following meanings: A=All adults, RV= Registered Voters, V=Voters, and LV=Likely Voters. The tenth feature describes the weighting system that was used to measure the quality of the polling with negative scores being more favorable and indicating above-average quality polls. In the eleventh column, it goes into the influence? The twelfth column is the approval rating based on the sample size of the conducted poll while the thirteen column approval rating is the disapproval rating drawn on the sample size as the twelfth column. The fourteenth and fifteenth columns describe the approval rating and disapproval rating respectively but are adjusted to reflect an improved and higher-quality rating. Column sixteen describes whether or not there were various versions of the same data set. The seventeen columns describe whether or not the sample size was tracked. In the eighteen column you can find the hyperlink to the original poll. In the eighteenth column, it describes the assigned identification number assigned to each individual poll. The nineteenth column is the number assigned to the series of questions asked with each series of questions having a unique identifier. The twenty-first feature is the date on which? Lastly, the twenty-second column describes the timestamp on which the database was generated.
 
 
@@ -39,6 +51,9 @@ library(knitr)
 kable(head(approval_rating_df),n=4L)
 ```
 ### Lawsuit Data
+
+[Data Set](https://github.com/fivethirtyeight/data/blob/master/trump-lawsuits/trump-lawsuits.csv)
+
 The data set contains all of Trump’s lawsuits leading up to May 31st, 2019. The data was retrieved from FiveThirtyEight’s GitHub repository and was collected by the same company. The data for this CSV file was collected by data mining the internet as this is public information available to everyone. This helps because it provides the data for all of his lawsuits along with their date so we can see how they affect the approval rating trendline above. The first column of this data set lists the docket number associated with the legal dispute between the plaintiff and the defendant. The second column then follows up by listing the date for which the lawsuit was filed. The name of the lawsuit is listed in the third feature of the data set with the name of the plaintiff being listed in the fourth, and the defendant (being Donald J. Trump) being listed in the fifth. The sixth feature of this data set is where the location of the lawsuit took place and was reviewed. The seventh feature describes the previous location column describes if the lawsuit had been reviewed at a previous court before being moved up to the superior court for further review. The eighth column describes whether the case was heard at a state or federal level with the value one indicating federal and the value two indicating state level. In the ninth feature it lists the judge(s) that oversaw the lawsuit.The tenth column goes into listing the PACER code which is a categorical code assigned to cases at the federal level. The eleventh feature goes into whether the case is related to action before Trump became president indicated by a value of one, during Trump’s presidency indicated by a value of two, or a lawsuit aimed at a policy as a result of Trump’s presidency indicated by a value of three. In the twelfth column it describes the type of lawsuit that the plaintiff filed against Donald Trump with a value of one indicating a personal lawsuit, a value of two indicating a lawsuit against his administration, three indicating Trump as a plaintiff, four being Trump’s administration acting as a plaintiff, five being a case directed towards Trump’s associate, and six indicating a category that did not fall into any of the previous ones.  The thirteenth feature describes the type of lawsuit with one indicating a criminal case and two being a civil case. The fourteenth column lists the key issue raised in the case. Column fifteen is the original docket number and the sixteenth column is the status of the case with number one indicating that the case is ongoing and two indicating that the case is closed. 
 
 
@@ -86,6 +101,10 @@ There are no outliers in this data since it is a collection of tweets posted by 
 In our tweets data, we have `r number_columns_lawsuits` columns labeled  (`r feature_names_lawsuits`). The lawsuit's dates ranged from `r lawsuit_date_range[1]` to `r lawsuit_date_range[2]` with the total amount of lawsuits being `r total_lawsuits`
 
 There are no outliers in this data since it is a collection of lawsuits Trump faced during his presidency.
+
+```{r lawsuits_plot, echo=FALSE}
+plot(lawsuits_plot)
+```
 
 ## Specific Question Analysis
 

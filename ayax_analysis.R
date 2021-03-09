@@ -1,7 +1,9 @@
 library(dplyr)
 library(ggplot2)
-data <- read.csv("data/tweets_01-08-2021.csv")
-approval_ratings <- read.csv('data/approval_topline.csv')
+
+
+data <-  read.csv("data/tweets_01-08-2021.csv")
+approval_ratings <- read.csv("data/approval_topline.csv")
 
 # Clean up tweets data
 presidency_tweets <- data[ data$date > '2017-01-23',]

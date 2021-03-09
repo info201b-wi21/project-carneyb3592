@@ -1,8 +1,12 @@
 # loading packages and dfs
 library("tidyverse")
 library("ggplot2")
-tweets_df = read.csv("data/tweets_01-08-2021.csv")
-approval_rating_df = read.csv("data/approval_topline.csv")
+
+
+tweets_df <- read.csv("data/tweets_01-08-2021.csv")
+approval_rating_df <- read.csv("data/approval_topline.csv")
+lawsuits_df <- read.csv("data/trump_lawsuits.csv")
+
 
 
 # changes modeldate column from char class to date class

@@ -2,11 +2,15 @@ library("dplyr")
 library("tidyr")
 library("ggplot2")
 
-# loading packages and dfs
-tweets_df = read.csv("data/tweets_01-08-2021.csv")
-approval_rating_df = read.csv("data/approval_topline.csv")
 
-lawsuits_df = read.csv("data/trump_lawsuits.csv")
+
+tweets_df <- read.csv("data/tweets_01-08-2021.csv")
+approval_rating_df <- read.csv("data/approval_topline.csv")
+lawsuits_df <- read.csv("data/trump_lawsuits.csv")
+
+
+# loading packages and dfs
+
 ##View(tweets_df)
 ##View(approval_rating_df)
 #View(lawsuits_df)
@@ -171,4 +175,7 @@ tweet_plot <- ggplot(data = plottable_tweet_df) +
   )
 
 plot(tweet_plot)  
+
+
+
 
