@@ -41,6 +41,19 @@ plottable_data <- approval_rating_df %>%
 my_server <- function(input, output) {
   
   
+  output$plot_approval <- renderPlot({
+    ggplot(data = approval_rating_df) +
+      geom_line(mapping = aes(x = modeldate,y = approve_estimate)) +
+      labs(
+        title = "Trump's Approval Rating Over Time",
+        x = "Date",
+        y = "Approval Rating"
+      ) +
+      theme(title = element_text(size = 16)) +
+      scale_y_continuous(labels = function(x) paste0(x, "%"))
+    
+    
+  })
   
   # Makes a label based on value selected
   #table
@@ -59,7 +72,7 @@ my_server <- function(input, output) {
   #})
   
   #plot
-  output$plot <- renderPlot ({
+  output$plot_interactive <- renderPlot ({
     
     approval_rating_df <- filter(approval_rating_df, modeldate >= input$year_input[1] & modeldate <= input$year_input[2])
     tweets_df <- filter(tweets_df, date >= input$year_input[1] & date <= input$year_input[2])
