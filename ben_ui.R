@@ -15,7 +15,7 @@ tweets_df <- tweets_df %>%
   filter(date > "2017-01-22")
 
 
-
+tweets_date_range <- range(tweets_df$date)
 
 # Define UI for application that draws a histogram
 my_ui <- fluidPage(
@@ -24,25 +24,29 @@ my_ui <- fluidPage(
   titlePanel("Trump's Twitter vs Approval Rating."),
   
   #paragraph of info 
-  p("This website contains information for almost every country and their carbon dioxide emissions. You can view this as tables of values or a graph."),
-  strong("IMPORTANT NOTICE: If values appear as N/A or do not show up in the graphs, that means that no data for that value exists."),
+  p("This website contains all the tweets made by and the approval rating of, Donald Trump."),
+  strong("IMPORTANT NOTICE: If tweets appear as NA or do not show up any text, it means there are no tweets for that day. \n \n
+         If you click the dots on the graph, it will show all the tweets made by @realDonaldTrump on that Day!"),
   # Sidebar with a slider input for number of bins
   sidebarLayout(
     sidebarPanel(
-      sliderInput(inputId = "year_input",
-                  "Year",
-                  min = 1900,
-                  max = 2000,
-                  value = c(1900,2000),
-                  sep = ""),
+      dateRangeInput(inputId = "year_input",
+                  "Date",
+                  start = tweets_date_range[1],
+                  end = tweets_date_range[2],
+                  min = tweets_date_range[1],
+                  max = tweets_date_range[2],
+                  sep = " to "),
       
     ),
     
     # Show a plot of the generated distribution
     mainPanel(
       tabsetPanel(id = "tabs",
-                  tabPanel("Table",tableOutput("data"),textOutput(outputId = "message_table")),
-                  tabPanel("Visualization",plotOutput("plot")))
+                  tabPanel("Visualization",
+                           plotOutput("plot", click = "plot_click"),
+                           strong("Click on the dots to view what tweets were made that day!"),
+                           verbatimTextOutput("info")))
     )
   )
 )
