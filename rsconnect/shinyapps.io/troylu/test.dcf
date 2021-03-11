@@ -1,0 +1,12 @@
+name: test
+title: test
+username:
+account: troylu
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3773046
+bundleId: 4330209
+url: https://troylu.shinyapps.io/test/
+when: 1615455395.73934
+asMultiple: FALSE
+asStatic: FALSE
