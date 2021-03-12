@@ -1,3 +1,4 @@
+
 library("shiny")
 library("dplyr")
 library("tidyverse")
@@ -9,4 +10,5 @@ tweets_df <- read.csv("data/tweets_01-08-2021.csv")
 approval_rating_df <- read.csv("data/approval_topline.csv")
 get_data(approval_rating_df,tweets_df)
 shinyApp(ui = ben_ui,server = ben_server)
+
 
