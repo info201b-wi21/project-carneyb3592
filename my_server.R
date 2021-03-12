@@ -3,14 +3,9 @@ library("dplyr")
 library("tidyverse")
 library("ggplot2")
 
-get_tweets_data <- function(file){
-  tweets_df <- file
-}
-get_approval_data <- function(file){
-  approval_rating_df <- file
-}
-#tweets_df <- read.csv("data/tweets_01-08-2021.csv")
-#approval_rating_df <- read.csv("data/approval_topline.csv")
+
+tweets_df <- read.csv("data/tweets_01-08-2021.csv")
+approval_rating_df <- read.csv("data/approval_topline.csv")
 #View(approval_rating_df)
 approval_rating_df_ben <- approval_rating_df %>%
   mutate(modeldate = as.Date(modeldate,"%m/%d/%Y"))  %>%
@@ -39,7 +34,7 @@ plottable_data <- approval_rating_df_ben %>%
   
 #View(plottable_data)
 # Define server logic required to draw a histogram
-ben_server <- function(input, output) {
+my_server <- function(input, output) {
   
   #Bens Work
         #Approval Plot
@@ -206,6 +201,16 @@ ben_server <- function(input, output) {
           theme(title = element_text(size = 16))
         
         
+        
+      })
+      output$dis_approval_table <- renderTable({
+        
+        combined_approval_rating_df %>%
+          mutate(date = as.character(date)) %>%
+          filter(date == "2017-01-23" | date == "2017-01-24" | date == "2017-01-25" | date == "2017-01-26" | date == "2017-01-27") %>%
+          select("Date" = date, "Total Tweets & Retweets" = total_re_tweets, "Approval Rating" = approve_estimate, "Disapproval Rating" = disapprove_estimate)
+        
+        
       })
   #Lances Work
       tweets_df_lance = tweets_df
@@ -260,14 +265,16 @@ ben_server <- function(input, output) {
       num_tweets_on_low_approval_dates_df <- approval_lows_df %>% 
         left_join(tweets_grouped_day_df) %>% 
         select(date, approve_estimate, num_tweets, average_past_week) %>% 
-        mutate(average_daily_tweets = average_daily_tweets) %>% 
-        pivot_longer(cols = c(num_tweets, average_past_week, average_daily_tweets), names_to = "tweet_values")
+        mutate(date = as.character(date), average_daily_tweets = average_daily_tweets) %>% 
+        pivot_longer(cols = c(num_tweets, average_past_week, average_daily_tweets), names_to = "tweet_values") %>% 
+        mutate(value = replace_na(value, 0))
       
       num_tweets_on_high_approval_dates_df <- approval_highs_df %>% 
         left_join(tweets_grouped_day_df) %>% 
         select(date, approve_estimate, num_tweets, average_past_week) %>% 
-        mutate(average_daily_tweets = average_daily_tweets) %>% 
-        pivot_longer(cols = c(num_tweets, average_past_week, average_daily_tweets), names_to = "tweet_values")
+        mutate(date = as.character(date), average_daily_tweets = average_daily_tweets) %>% 
+        pivot_longer(cols = c(num_tweets, average_past_week, average_daily_tweets), names_to = "tweet_values") %>% 
+        mutate(value = replace_na(value, 0))
       
       emission_switch <- reactive({
         emission <- switch(input$Approval,
@@ -276,6 +283,25 @@ ben_server <- function(input, output) {
                            lnorm = rlnorm,
                            exp = rexp,
                            rnorm)
+      })
+      #table
+      output$lance_table <- renderTable({
+        if (input$Approval == "Low") {
+          my_table_1 <- num_tweets_on_low_approval_dates_df
+          colnames(my_table_1)[1] <- "Date"
+          colnames(my_table_1)[2] <- "Approval Estiamte"
+          colnames(my_table_1)[3] <- "Tweet Type"
+          colnames(my_table_1)[4] <- "Number Tweets"
+          return(my_table_1)
+        }
+        else {
+          my_table_2 <- num_tweets_on_high_approval_dates_df
+          colnames(my_table_2)[1] <- "Date"
+          colnames(my_table_2)[2] <- "Approval Estiamte"
+          colnames(my_table_2)[3] <- "Tweet Type"
+          colnames(my_table_2)[4] <- "Number Tweets"
+          return(my_table_2)
+        }
       })
       
       #High/Low plot
@@ -390,7 +416,7 @@ ben_server <- function(input, output) {
       # .193
       output$ayax_table <- renderTable({
         final_table <- filter(final_df, Mean_Approval_Estimate > input$approval_choice[1] & Mean_Approval_Estimate < input$approval_choice[2])
-        final_table <- select(final_df,!date)
+        final_table <- select(final_table,!date)
         colnames(final_table)[1] <- "Year"
         colnames(final_table)[2] <- "Mean Approval Rating"
         colnames(final_table)[3] <- "Count of Tweets"

@@ -1,13 +1,8 @@
 library("shiny")
 library("dplyr")
-get_tweets_data <- function(file){
-  tweets_df <- file
-}
-get_approval_data <- function(file){
-  approval_rating_df <- file
-}
-#tweets_df <- read.csv("data/tweets_01-08-2021.csv")
-#approval_rating_df <- read.csv("data/approval_topline.csv")
+
+tweets_df <- read.csv("data/tweets_01-08-2021.csv")
+approval_rating_df <- read.csv("data/approval_topline.csv")
 approval_rating_df_ui <- approval_rating_df %>%
   mutate(modeldate = as.Date(modeldate,"%m/%d/%Y"))
 
@@ -20,7 +15,7 @@ approval_rating_range <- range(approval_rating_df_ui$approve_estimate)
 tweets_date_range <- range(tweets_df_ui$date)
 
 # Define UI for application that draws a histogram
-ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald Trump"),
+my_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald Trump"),
   navbarPage(NULL,
   
   #intro panel
@@ -118,11 +113,13 @@ ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald T
              ),
              
              mainPanel(
-               plotOutput("dis_approval_plot"),
-               em("The plot above mark former president Donald Trump's Twitter activity, specifically his tweets and retweets, and the averages of his approval ratings per day.",style = "font-size:16px"),
-               br(),
-               br(),
-               p("According to our data and visualizations, there doesn't seem to be any evident correlation between the number of tweets/retweets and approval rating. 
+               tabsetPanel(
+                 tabPanel("Visualization",
+                  plotOutput("dis_approval_plot"),
+                  em("The plot above mark former president Donald Trump's Twitter activity, specifically his tweets and retweets, and the averages of his approval ratings per day.",style = "font-size:16px"),
+                   br(),
+                  br(),
+                  p("According to our data and visualizations, there doesn't seem to be any evident correlation between the number of tweets/retweets and approval rating. 
              Although the number of posts has increased significantly during Trump's presidency, his approval rate has remained quite stagnant. 
              Trump's lowest approval rating was 36.40314%, which occurred on December 16, 2017. His highest, 47.76497%, happened on January 25, 2017. 
              For the majority of his presidency, however, Trump's approval rating remained in the low 40s, sometimes dipping into the high 30s. 
@@ -130,10 +127,11 @@ ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald T
              we once again noticed that his disapproval ratings were stagnant; Trump's disapproval rating peaked (57.50006%) in December 16, 2017, when he was rarely tweeting (8 tweets).
              As mentioned earlier, Trump began to tweet much more frequently in the second half of his presidency, 2019-2020, yet his disapproval rating stayed in the low fifties. 
              Taking all of this into consideration, we have come to the conclusion that there isn't a relationship between Trump's tweeting activity and his approval rating. ")
-               
+               ),
+               tabPanel("Table",tableOutput("dis_approval_table"))
           
                
-             ))
+             )))
             
            
            
@@ -154,19 +152,25 @@ ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald T
              ),
              
              mainPanel(
-               plotOutput("plot"), 
-               textOutput("plot_description"),
-               br(),
-               textOutput("analysis_text"),
-               br(),
-               textOutput("summary_text"),
-               h3("Relevant Links"),
-               a("General News", href = "https://en.wikipedia.org/wiki/Portal:Current_events/December_2017"),
-               br(),
-               a("Drug Overdose Information", href = "https://www.usnews.com/news/national-news/articles/2017-12-15/drug-overdose-deaths-continue-to-soar"),
-               br(),
-               a("Corona Virus Relief Package", href = "https://www.cbsnews.com/news/trump-signs-coronavirus-relief-package-today-2020-03-27/")
-             )),
+               tabsetPanel(
+                 tabPanel("Visualization",
+                   plotOutput("plot"), 
+                   textOutput("plot_description"),
+                   br(),
+                   textOutput("analysis_text"),
+                   br(),
+                   textOutput("summary_text"),
+                   h3("Relevant Links"),
+                   a("General News", href = "https://en.wikipedia.org/wiki/Portal:Current_events/December_2017"),
+                   br(),
+                   a("Drug Overdose Information", href = "https://www.usnews.com/news/national-news/articles/2017-12-15/drug-overdose-deaths-continue-to-soar"),
+                   br(),
+                   a("Corona Virus Relief Package", href = "https://www.cbsnews.com/news/trump-signs-coronavirus-relief-package-today-2020-03-27/")
+                 ),
+                 tabPanel("Table",tableOutput("lance_table"))
+                )
+             )
+             ),
            
            tags$style("#plot_description{font-size: 16px;
                    font-style: italic;
