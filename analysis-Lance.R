@@ -99,14 +99,12 @@ num_tweets_on_low_approval_dates_df <- approval_lows_df %>%
   select(date, approve_estimate, num_tweets, average_past_week) %>% 
   mutate(average_daily_tweets = average_daily_tweets) %>% 
   pivot_longer(cols = c(num_tweets, average_past_week, average_daily_tweets), names_to = "tweet_values")
-view(num_tweets_on_low_approval_dates_df)
 
 num_tweets_on_high_approval_dates_df <- approval_highs_df %>% 
   left_join(tweets_grouped_day_df) %>% 
   select(date, approve_estimate, num_tweets, average_past_week) %>% 
   mutate(average_daily_tweets = average_daily_tweets) %>% 
   pivot_longer(cols = c(num_tweets, average_past_week, average_daily_tweets), names_to = "tweet_values")
-view(num_tweets_on_high_approval_dates_df)
 
 tweet_rates_for_low_approve_plot <- ggplot(num_tweets_on_low_approval_dates_df) +
   geom_col(aes(x = value, y = as.character(approve_estimate), 
