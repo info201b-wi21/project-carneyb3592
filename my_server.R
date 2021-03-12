@@ -55,7 +55,7 @@ my_server <- function(input, output) {
           output_table <- filter(plottable_data, modeldate >= input$year_input[1] & modeldate <= input$year_input[2])
           output_table <- mutate(output_table,modeldate = as.character(modeldate))
           colnames(output_table)[1] <- "Year"
-          colnames(output_table)[2] <- "Apporoval Rating (%)"
+          colnames(output_table)[2] <- "Approval Rating (%)"
           colnames(output_table)[3] <- "Number of Tweets"
           
           return(output_table)
@@ -289,7 +289,7 @@ my_server <- function(input, output) {
         if (input$Approval == "Low") {
           my_table_1 <- num_tweets_on_low_approval_dates_df
           colnames(my_table_1)[1] <- "Date"
-          colnames(my_table_1)[2] <- "Approval Estiamte"
+          colnames(my_table_1)[2] <- "Approval Estimate"
           colnames(my_table_1)[3] <- "Tweet Type"
           colnames(my_table_1)[4] <- "Number Tweets"
           return(my_table_1)
@@ -335,10 +335,10 @@ my_server <- function(input, output) {
       #Plot description text
       output$plot_description <- renderText(
         if (input$Approval == "Low") {
-          return(paste("This plot is showing different rates at which trump tweeted on dates he had the three lowest approval ratings."))
+          return(paste("This plot is showing different rates at which Trump tweeted on dates he had the three lowest approval ratings."))
         }
         else {
-          return(paste("This plot is showing different rates at which trump tweeted on dates he had the three highest approval ratings."))
+          return(paste("This plot is showing different rates at which Trump tweeted on dates he had the three highest approval ratings."))
         }
       )
       

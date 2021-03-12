@@ -59,7 +59,7 @@ my_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald Tr
           quality when analyzing datasets and poll results. This data set will help 
           when answering all of our questions as a major theme in our analysis is the public perception of the previous president. "),
         br(),
-        p("To View more about our data sets, visit our in-depth report linked below!"),
+        p("To view more about our data sets, visit our in-depth report linked below!"),
         a("In-Depth Report", href = "https://info201b-wi21.github.io/project-carneyb3592/index.html"), width = 6),
       sidebarPanel(plotOutput("plot_approval"),
         width = 6)
@@ -100,7 +100,7 @@ my_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald Tr
   )),
   #Tweets vs Approval rating page
   tabPanel("Tweets vs Approval Rating",
-           titlePanel("Did Trump's social media usage change the approval ratings of his voters? If so, by how much and what indicators point towards the change?."),
+           titlePanel("Did Trump's social media usage change the approval ratings of his voters? If so, by how much and what indicators point towards the change?"),
            sidebarLayout(
              sidebarPanel(
                radioButtons(
@@ -198,7 +198,7 @@ my_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald Tr
              mainPanel(tabsetPanel(
                tabPanel("Visualization",
                plotOutput("interaction_plot"),
-               em("The plot above shows the twitter interaction (retweets/favorites) compared to approval rating.",style = "font-size:16px"),
+               em("The plot above shows the Twitter interactions (retweets/favorites) compared to approval rating.",style = "font-size:16px"),
                br(),
                br(),
                p("The sheer volume of tweets had the most correlation with the approval rating 
