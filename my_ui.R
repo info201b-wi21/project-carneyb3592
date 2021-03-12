@@ -165,7 +165,7 @@ my_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald Tr
                    br(),
                    a("Drug Overdose Information", href = "https://www.usnews.com/news/national-news/articles/2017-12-15/drug-overdose-deaths-continue-to-soar"),
                    br(),
-                   a("Corona Virus Relief Package", href = "https://www.cbsnews.com/news/trump-signs-coronavirus-relief-package-today-2020-03-27/")
+                   a("Coronavirus Relief Package", href = "https://www.cbsnews.com/news/trump-signs-coronavirus-relief-package-today-2020-03-27/")
                  ),
                  tabPanel("Table",tableOutput("lance_table"))
                 )
