@@ -3,13 +3,14 @@ library("dplyr")
 library("tidyverse")
 library("ggplot2")
 
-get_data <- function(file_a,file_t){
-  tweets_df <- file_t
-  approval_rating_df <- file_a
-  
+get_tweets_data <- function(file){
+  tweets_df <- file
 }
-tweets_df <- read.csv("data/tweets_01-08-2021.csv")
-approval_rating_df <- read.csv("data/approval_topline.csv")
+get_approval_data <- function(file){
+  approval_rating_df <- file
+}
+#tweets_df <- read.csv("data/tweets_01-08-2021.csv")
+#approval_rating_df <- read.csv("data/approval_topline.csv")
 #View(approval_rating_df)
 approval_rating_df_ben <- approval_rating_df %>%
   mutate(modeldate = as.Date(modeldate,"%m/%d/%Y"))  %>%
@@ -69,17 +70,18 @@ ben_server <- function(input, output) {
             title = "Tweets along Approval rating",
             x = "Date",
             y = "Approval Rating",
-            color = "Number of Tweets",
-            caption = "Each dot represents the Tweets made by @realDonaldTrump on that day."
+            color = "Number of Tweets"
           ) +
           theme(title = element_text(size = 16)) +
           scale_y_continuous(labels = function(x) paste0(x, "%"))
           
           
         })
+        
         output$info <- renderPrint({
-          output_df <- approval_rating_df %>%
-            left_join(tweets_df,by = c("modeldate" = "date"))
+          
+          output_df <- approval_rating_df_ben %>%
+            left_join(tweets_df_ben,by = c("modeldate" = "date"))
           
           output_data <- nearPoints(output_df,input$plot_click, xvar = "modeldate",yvar = "approve_estimate")%>%
             select(modeldate,text)
@@ -93,18 +95,24 @@ ben_server <- function(input, output) {
           }
           
           output_text <- make_text(output_data)
+          if(output_text == ": : "){
+            return("Click on the Dots to see what he tweeted!")
+          }
           return(output_text)
         })
   
+        
   #Troys Work
-      approval_rating_df <- approval_rating_df %>%
+        
+        
+      approval_rating_df_troy <- approval_rating_df %>%
         mutate(modeldate = as.Date(modeldate,"%m/%d/%Y"))
       
       
-      tweets_df <- tweets_df %>%
+      tweets_df_troy <- tweets_df %>%
         mutate(date = as.Date(date))
       
-      num_of_tweets_per_day_df <- tweets_df %>%
+      num_of_tweets_per_day_df <- tweets_df_troy %>%
         filter(isRetweet == "f") %>%
         filter(date > "2017-01-22") %>%
         group_by(date) %>%
@@ -114,7 +122,7 @@ ben_server <- function(input, output) {
         complete(date = seq.Date(min(as.Date("2017-01-23")), max(date), by = "day")) %>%       # adds in missing dates to make it possible for left_join
         mutate(num_of_tweets_per_day = replace_na(num_of_tweets_per_day, 0))                 # replaces na values for 0
       
-      num_of_retweets_per_day_df <- tweets_df %>%
+      num_of_retweets_per_day_df <- tweets_df_troy %>%
         filter(isRetweet == "t") %>%
         filter(date > "2017-01-22") %>%
         group_by(date) %>%
@@ -134,7 +142,7 @@ ben_server <- function(input, output) {
       
       
       # APPROVAL ESTIMATE
-      approval_estimate_rating_df <- approval_rating_df %>%
+      approval_estimate_rating_df <- approval_rating_df_troy %>%
         filter(modeldate > "2017-01-22") %>%
         group_by(modeldate) %>%
         filter(subgroup == "All polls") %>%
@@ -142,7 +150,7 @@ ben_server <- function(input, output) {
       
       
       # DISAPPROVAL ESTIMATE
-      disapproval_estimate_rating_df <- approval_rating_df %>%
+      disapproval_estimate_rating_df <- approval_rating_df_troy %>%
         filter(modeldate > "2017-01-22") %>%
         group_by(modeldate) %>%
         filter(subgroup == "All polls") %>%
@@ -187,10 +195,202 @@ ben_server <- function(input, output) {
         
       })
   #Lances Work
+      tweets_df_lance = tweets_df
+      approval_rating_df_lance = approval_rating_df
+      
+      # Data wrangling/Exploratory report stuff
+      tweet_date_modified_df <- tweets_df_lance %>% 
+        mutate(date = as.Date(gsub(date, pattern=" 0:00:00", replacement="", fixed=T))) %>% 
+        filter(date >= as.Date("2017-1-23"))
+      
+      approval_rating_date_formatted_df <- approval_rating_df_lance %>% 
+        mutate(date = as.Date(format(as.Date(modeldate, '%m/%d/%Y'), '%Y-%m-%d')))
       
       
+      #Exploratory report start
+      
+      #approval wrangling
+      approval_highs_df <- approval_rating_date_formatted_df %>%
+        filter(subgroup == "All polls") %>% 
+        slice_max(approve_estimate, n = 3)
+      
+      approval_lows_df <- approval_rating_date_formatted_df %>% 
+        filter(subgroup == "All polls") %>% 
+        slice_min(approve_estimate, n = 3)
+      
+      # Use for analysis
+      high_approval_dates <- approval_highs_df %>% 
+        pull(date)
+      
+      low_approval_dates <- approval_lows_df %>% 
+        pull(date)
+      
+      #Tweet wrangling
+      tweets_grouped_day_df <- tweet_date_modified_df %>% 
+        group_by(date) %>% 
+        summarise(date = unique(date), num_tweets = length(unique(id))) %>% 
+        mutate(average_past_week = (num_tweets + lag(num_tweets, 7) + 
+                                      lag(num_tweets, 6) +
+                                      lag(num_tweets, 5) +
+                                      lag(num_tweets, 4)+
+                                      lag(num_tweets, 3)+
+                                      lag(num_tweets, 2)+
+                                      lag(num_tweets, 1)
+        ) / 7)
+      
+      ## average daily tweets between 2018 and 2021
+      average_daily_tweets <- tweets_grouped_day_df %>% 
+        pull(num_tweets) %>% 
+        mean()
+      
+      # combine data
+      num_tweets_on_low_approval_dates_df <- approval_lows_df %>% 
+        left_join(tweets_grouped_day_df) %>% 
+        select(date, approve_estimate, num_tweets, average_past_week) %>% 
+        mutate(average_daily_tweets = average_daily_tweets) %>% 
+        pivot_longer(cols = c(num_tweets, average_past_week, average_daily_tweets), names_to = "tweet_values")
+      
+      num_tweets_on_high_approval_dates_df <- approval_highs_df %>% 
+        left_join(tweets_grouped_day_df) %>% 
+        select(date, approve_estimate, num_tweets, average_past_week) %>% 
+        mutate(average_daily_tweets = average_daily_tweets) %>% 
+        pivot_longer(cols = c(num_tweets, average_past_week, average_daily_tweets), names_to = "tweet_values")
+      
+      emission_switch <- reactive({
+        emission <- switch(input$Approval,
+                           norm = rnorm,
+                           unif = runif,
+                           lnorm = rlnorm,
+                           exp = rexp,
+                           rnorm)
+      })
+      
+      output$plot <- renderPlot(
+        if (input$Approval == "Low") {
+          tweet_rates_for_low_approve_plot <- ggplot(num_tweets_on_low_approval_dates_df) +
+            geom_col(aes(x = value, y = as.character(approve_estimate), 
+                         fill = tweet_values), position = position_dodge2(reverse = FALSE)) +
+            scale_fill_manual("Tweets", 
+                              labels = c("Average Daily Tweets", "Average Tweets Past Week", "Approval Date Tweets"), 
+                              values = c("#a6cee3", "#b2df8a", "#1f78b4")) +
+            labs(x = "Number of tweets", y = "Three Lowest Approval Ratings") +
+            ggtitle("Tweet Stats for Lowest Approval Ratings")
+          
+          return(tweet_rates_for_low_approve_plot)
+        }
+        else {
+          tweet_rates_for_high_approve_plot <- ggplot(num_tweets_on_high_approval_dates_df) +
+            geom_col(aes(x = value, y = as.character(approve_estimate), 
+                         fill = tweet_values), position = position_dodge2(reverse = FALSE)) +
+            scale_fill_manual("Tweets", 
+                              labels = c("Average Daily Tweets", "Average Tweets Past Week", "Approval Date Tweets"), 
+                              values = c("#a6cee3", "#b2df8a", "#1f78b4")) +
+            labs(x = "Number of tweets", y = "Three Highest Approval Ratings") +
+            ggtitle("Tweet Stats for Highest Approval Ratings")
+          
+          return(tweet_rates_for_high_approve_plot)
+        }
+      )
+      
+      output$plot_description <- renderText(
+        if (input$Approval == "Low") {
+          return(paste("This plot is showing different rates at which trump tweeted on dates he had the three lowest approval ratings."))
+        }
+        else {
+          return(paste("This plot is showing different rates at which trump tweeted on dates he had the three highest approval ratings."))
+        }
+      )
+      
+      output$analysis_text <- renderText(
+        if (input$Approval == "Low") {
+          return(paste("These three approval ratings were taken on the dates ", 
+                       low_approval_dates[1], ", ", low_approval_dates[2], ", and ", low_approval_dates[3], ". ", 
+                       "During these dates, Trump was going through legal trouble and some troubling news ",
+                       "regarding overdoses in the US. The number of overdoses was, by the end of May 2017 was 66,324, ", 
+                       "up 17% when compared to the previous 12-month period. ",
+                       "at this same time, A Federal District Judge for Eastern Pennsylvania temporarily enjoins ", 
+                       "the Trump administration from implementing new rules that change the Obamacare contraceptive mandate. ", 
+                       "California, Delaware, Maryland, Massachusetts, New York, Virginia and Washington ",
+                       "also sued the federal government over the rules. ", 
+                       sep = ""))
+        }
+        else {
+          return(paste("These three approval ratings were taken on the dates ",
+                       high_approval_dates[1], ", ", high_approval_dates[2], ", ", high_approval_dates[3],
+                       ". Around these dates in April a 2 trillion dollar covid relief bill had been signed.", 
+                       sep = ""))
+        }
+      )
+      
+      output$summary_text <- renderText({
+        return(paste("While there is a slight correlation between the rise in tweets and a rise", 
+                     "the approval rates in this VERY small subset",
+                     "of data. Due to this being a small isolated subset it is hard to",
+                     "say that there is any correlation or causation between tweet rate and approval rate",
+                     "with a lack of very convincing evidence.",
+                     "The research I have done on these dates leads me to believe that the cause for these highs",
+                     "and lows was from the current events happening during those time periods",
+                     sep = " "))
+      })
   #Ayax's Work
+      data <-  tweets_df
+      approval_ratings <- approval_rating_df
       
+      presidency_tweets <- data[ data$date > '2017-01-23',]
+      presidency_tweets <- presidency_tweets[presidency_tweets$isRetweet == 'f',]
+      presidency_tweets$date <- as.Date(presidency_tweets$date)
+      tweets_by_date <- presidency_tweets %>% count(date)
+      
+      # Clean up approval data
+      approval_ratings$date <- as.Date(approval_ratings$timestamp,"%m/%d/%Y")
+      approval_ratings_by_date <- approval_ratings  %>%
+        group_by(modeldate) %>%
+        summarize(Mean_Approval_Estimate = mean(approve_estimate, na.rm=TRUE))
+      
+      approval_ratings_by_date$date <- strptime(as.character(approval_ratings_by_date$modeldate), "%m/%d/%Y")
+      approval_ratings_by_date <- approval_ratings_by_date[ approval_ratings_by_date$date > '2017-01-23',]
+      
+      # Prepare tweets data
+      average_retweets_by_date <- presidency_tweets  %>%
+        group_by(date) %>%
+        summarize(Mean_Retweets = mean(retweets, na.rm=TRUE))
+      
+      average_favourite_by_date <- presidency_tweets  %>%
+        group_by(date) %>%
+        summarize(Mean_Favourites = mean(favorites, na.rm=TRUE))
+      
+      approval_ratings_by_date$date <- as.Date(approval_ratings_by_date$date)
+      final_df <- merge(x = approval_ratings_by_date, y = tweets_by_date, by = "date")
+      final_df <- merge(x = final_df, y = average_favourite_by_date,by = "date")
+      final_df <- merge(x = final_df, y = average_retweets_by_date,by = "date")
+      
+      correlation_of_number <- cor(final_df$Mean_Approval_Estimate, y= final_df$n)
+      # .28
+      correlation_of_favorites <-cor(final_df$Mean_Approval_Estimate, y= final_df$Mean_Favourites)
+      # .216
+      correlation_of_retweets <- cor(final_df$Mean_Approval_Estimate, y= final_df$Mean_Retweets)
+      # .193
+      
+      
+      
+      output$interaction_plot <- renderPlot({
+        
+        plottable_final_df <- filter(final_df, Mean_Approval_Estimate > input$approval_choice[1] & Mean_Approval_Estimate < input$approval_choice[2])
+        
+        ggplot(plottable_final_df) +
+          geom_col(mapping = aes(x = Mean_Approval_Estimate, y = Mean_Favourites, fill = "Mean Favorites per day"), width = .9) + 
+          geom_col(mapping = aes(x = Mean_Approval_Estimate, y = Mean_Retweets, fill = "Mean Retweets"), width = .9) + 
+          scale_y_continuous(sec.axis = sec_axis(~.*1, name = "Number of Tweets/Retweets")) + 
+          scale_fill_manual(values = c("#FF9E99", "#1F78B4"))+
+          labs(title = "Trumps Approval Rating vs Twitter Interaction",
+               x = "Approval Rating",
+               y = "Mean Favorites per day",
+               fill = "") +
+          scale_x_continuous(labels = function(x) paste0(x, "%"))
+        
+        
+        
+      })
       
   
 }

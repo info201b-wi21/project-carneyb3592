@@ -3,15 +3,15 @@ library(tidyverse)
 library(ggplot2)
 library(shiny)
 
-tweets_df = read.csv("data/tweets_01-08-2021.csv")
-approval_rating_df = read.csv("data/approval_topline.csv")
+tweets_df_lance = read.csv("data/tweets_01-08-2021.csv")
+approval_rating_df_lance_lance = read.csv("data/approval_topline.csv")
 
 # Data wrangling/Exploratory report stuff
-tweet_date_modified_df <- tweets_df %>% 
+tweet_date_modified_df <- tweets_df_lance_lance %>% 
   mutate(date = as.Date(gsub(date, pattern=" 0:00:00", replacement="", fixed=T))) %>% 
   filter(date >= as.Date("2017-1-23"))
 
-approval_rating_date_formatted_df <- approval_rating_df %>% 
+approval_rating_date_formatted_df <- approval_rating_df_lance %>% 
   mutate(date = as.Date(format(as.Date(modeldate, '%m/%d/%Y'), '%Y-%m-%d')))
 
 
