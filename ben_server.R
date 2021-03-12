@@ -42,6 +42,7 @@ plottable_data <- approval_rating_df_ben %>%
 ben_server <- function(input, output) {
   
   #Bens Work
+        #Approval Plot
         output$plot_approval <- renderPlot({
           ggplot(data = approval_rating_df_ben) +
             geom_line(mapping = aes(x = modeldate,y = approve_estimate)) +
@@ -55,7 +56,17 @@ ben_server <- function(input, output) {
           
           
         })
-        
+        output$ben_table <- renderTable({
+          output_table <- filter(plottable_data, modeldate >= input$year_input[1] & modeldate <= input$year_input[2])
+          output_table <- mutate(output_table,modeldate = as.character(modeldate))
+          colnames(output_table)[1] <- "Year"
+          colnames(output_table)[2] <- "Apporoval Rating (%)"
+          colnames(output_table)[3] <- "Number of Tweets"
+          
+          return(output_table)
+          
+        })
+        #Interactive Plot with tweets
         output$plot_interactive <- renderPlot ({
           
           approval_rating_df_ben <- filter(approval_rating_df_ben, modeldate >= input$year_input[1] & modeldate <= input$year_input[2])
@@ -78,6 +89,7 @@ ben_server <- function(input, output) {
           
         })
         
+        #Tweets output
         output$info <- renderPrint({
           
           output_df <- approval_rating_df_ben %>%
@@ -169,7 +181,7 @@ ben_server <- function(input, output) {
       
       
       
-      
+      #Troy Bar plot
       output$dis_approval_plot <- renderPlot({
         
         
@@ -190,7 +202,8 @@ ben_server <- function(input, output) {
           labs(title = paste("Former President Trump's Twitter Activity and", input$dis_approval, "between 01/2017 and 01/2021", sep = " "),
                x = "Year",
                y = input$dis_approval,
-               fill = "")
+               fill = "") + 
+          theme(title = element_text(size = 16))
         
         
       })
@@ -265,6 +278,7 @@ ben_server <- function(input, output) {
                            rnorm)
       })
       
+      #High/Low plot
       output$plot <- renderPlot(
         if (input$Approval == "Low") {
           tweet_rates_for_low_approve_plot <- ggplot(num_tweets_on_low_approval_dates_df) +
@@ -274,7 +288,7 @@ ben_server <- function(input, output) {
                               labels = c("Average Daily Tweets", "Average Tweets Past Week", "Approval Date Tweets"), 
                               values = c("#a6cee3", "#b2df8a", "#1f78b4")) +
             labs(x = "Number of tweets", y = "Three Lowest Approval Ratings") +
-            ggtitle("Tweet Stats for Lowest Approval Ratings")
+            ggtitle("Tweet Stats for Lowest Approval Ratings") + theme(title = element_text(size = 16))
           
           return(tweet_rates_for_low_approve_plot)
         }
@@ -286,12 +300,13 @@ ben_server <- function(input, output) {
                               labels = c("Average Daily Tweets", "Average Tweets Past Week", "Approval Date Tweets"), 
                               values = c("#a6cee3", "#b2df8a", "#1f78b4")) +
             labs(x = "Number of tweets", y = "Three Highest Approval Ratings") +
-            ggtitle("Tweet Stats for Highest Approval Ratings")
+            ggtitle("Tweet Stats for Highest Approval Ratings") + theme(title = element_text(size = 16))
           
           return(tweet_rates_for_high_approve_plot)
         }
       )
       
+      #Plot description text
       output$plot_description <- renderText(
         if (input$Approval == "Low") {
           return(paste("This plot is showing different rates at which trump tweeted on dates he had the three lowest approval ratings."))
@@ -301,6 +316,7 @@ ben_server <- function(input, output) {
         }
       )
       
+      #analysis text
       output$analysis_text <- renderText(
         if (input$Approval == "Low") {
           return(paste("These three approval ratings were taken on the dates ", 
@@ -322,6 +338,8 @@ ben_server <- function(input, output) {
         }
       )
       
+      
+      #Summary text
       output$summary_text <- renderText({
         return(paste("While there is a slight correlation between the rise in tweets and a rise", 
                      "the approval rates in this VERY small subset",
@@ -370,9 +388,18 @@ ben_server <- function(input, output) {
       # .216
       correlation_of_retweets <- cor(final_df$Mean_Approval_Estimate, y= final_df$Mean_Retweets)
       # .193
+      output$ayax_table <- renderTable({
+        final_table <- filter(final_df, Mean_Approval_Estimate > input$approval_choice[1] & Mean_Approval_Estimate < input$approval_choice[2])
+        final_table <- select(final_df,!date)
+        colnames(final_table)[1] <- "Year"
+        colnames(final_table)[2] <- "Mean Approval Rating"
+        colnames(final_table)[3] <- "Count of Tweets"
+        colnames(final_table)[4] <- "Mean Favourites"
+        colnames(final_table)[5] <- "Mean Retweets"
+        return(final_table)
+      })
       
-      
-      
+      #Interaction plot
       output$interaction_plot <- renderPlot({
         
         plottable_final_df <- filter(final_df, Mean_Approval_Estimate > input$approval_choice[1] & Mean_Approval_Estimate < input$approval_choice[2])
@@ -386,7 +413,7 @@ ben_server <- function(input, output) {
                x = "Approval Rating",
                y = "Mean Favorites per day",
                fill = "") +
-          scale_x_continuous(labels = function(x) paste0(x, "%"))
+          scale_x_continuous(labels = function(x) paste0(x, "%")) + theme(title = element_text(size = 16))
         
         
         

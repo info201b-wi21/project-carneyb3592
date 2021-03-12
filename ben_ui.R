@@ -27,7 +27,7 @@ ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald T
   tabPanel("Intro",
   sidebarLayout( mainPanel(
   
-      #paragraph of info 
+      #Intro Text
         h2("Problem Domain"),  
         p("For our project, we decided to investigate the domain of social media and 
         its impact on U.S. politics, specifically focusing on the presidency. Within 
@@ -49,7 +49,7 @@ ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald T
         br(),
         p("The data set is an archive of Donald Trump's tweets during his presidency, 
           beginning in September 2016 and ending on January 8th 2021 upon his ban 
-          ]from Twitter. The data set is composed of 56,572 tweets along with timestamps 
+          from Twitter. The data set is composed of 56,572 tweets along with timestamps 
           of when the tweets were posted as well as retweets/favorites for each tweet. 
           The source of this data set was created by Brendan Patrick Brown, a programmer/engineer from Georgetown University."),
         h3("Approal Rating Data"),
@@ -79,6 +79,7 @@ ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald T
     # Sidebar with a slider input for number of bins
   #Summary Analysis Panel
   tabPanel("Summary Analysis",
+    titlePanel("Summary Analysis"),
     sidebarLayout(
       sidebarPanel(
         dateRangeInput(inputId = "year_input",
@@ -92,16 +93,19 @@ ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald T
       ),
       
       # Show a plot of the generated distribution
-      mainPanel(plotOutput("plot_interactive", click = "plot_click"),
+      mainPanel(
+        tabsetPanel(
+          tabPanel("Visualization",plotOutput("plot_interactive", click = "plot_click"),
                 em("Each dot in the graph above represents the tweets made by @realDonaldTrump on that day.", style = "font-size:16px"),
                 br(),
                 br(),
-                verbatimTextOutput("info")
-      )
+                verbatimTextOutput("info")),
+          tabPanel("Table",tableOutput("ben_table"))
+      ))
   )),
-  
+  #Tweets vs Approval rating page
   tabPanel("Tweets vs Approval Rating",
-           titlePanel("Trump's Twitter Activity and Approval Ratings Between 2017 and 2021"),
+           titlePanel("Did Trump's social media usage change the approval ratings of his voters? If so, by how much and what indicators point towards the change?."),
            sidebarLayout(
              sidebarPanel(
                radioButtons(
@@ -134,8 +138,11 @@ ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald T
            
            
   ),
+  #Approval Rates vs Real Events page
   tabPanel("Approval Rates vs Real Events",
-           h1("Highest and Lowest Approval Rates In Comparison To Tweet Rates and Events"),
+           titlePanel("When were Trump's approval ratings at all time lows and at all 
+                      time highs and how much was he tweeting in that time period? What 
+                      major events were happening in that time period?"),
            
            sidebarLayout(
              sidebarPanel(
@@ -167,7 +174,9 @@ ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald T
            
            
            ),
+  # Approval Rating vs Twitter Interactions page
   tabPanel("Approval Rating vs Twitter Interactions",
+           titlePanel("Did Trump's tweets affect public opinion over the course of his presidency? If so, to what extent?"),
            sidebarLayout(
              sidebarPanel(
                sliderInput(
@@ -182,7 +191,8 @@ ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald T
                )
              ),
              
-             mainPanel(
+             mainPanel(tabsetPanel(
+               tabPanel("Visualization",
                plotOutput("interaction_plot"),
                em("The plot above shows the twitter interaction (retweets/favorites) compared to approval rating.",style = "font-size:16px"),
                br(),
@@ -206,8 +216,9 @@ ben_ui <- fluidPage(titlePanel("Analyzing the effect of Social Media on Donald T
                impact on his approval rating which would also be concerning because twitter is 
                an outlet for Trump to voice his public opinion on current issues and a near zero
                correlation would indicate that the public is in almost complete disregard and 
-               indifferent to trump's twitter usage.")
-             )
+               indifferent to trump's twitter usage.")),
+               tabPanel("Table",tableOutput("ayax_table"))
+             ))
              
            )
            
